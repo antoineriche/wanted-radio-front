@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { ShowPart } from '../../model/showpart';
-import { start } from 'repl';
 
 const DELAY = 100;
 
