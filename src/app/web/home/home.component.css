@@ -5,16 +5,53 @@
     opacity: 0.8; 
     filter: alpha(opacity=20);
 }
-.progress-bar{
+
+.vertical-prg{
+    position: absolute;
+    width: 90%;
+    height:100%;
+    opacity: 0.8; 
+    filter: alpha(opacity=20);
+}
+
+.vertical-progress-bar{
     position:absolute;
     top:0%; 
     width: 100%;
     height: 0%;
 }
 
+.bang {
+    border: solid 2px black;
+    padding: 3px;
+    font-size: small;
+}
+
+/* .vertical-progress {
+    position: absolute;
+    width: 90%;
+    height:100%;
+    opacity: 0.8; 
+    filter: alpha(opacity=20);
+}
+
+.vertical-progress-bar {
+    position:absolute;
+    top:0%; 
+    width: 100%;
+    height: 0%;
+} */
+
+.image-container {
+    /* position:absolute; */
+    /* width: 100%; */
+    background-color: #4ff;
+    /* height: 100%;/ */
+}
+
 .dfr{
     position:absolute;
-    border: 1px solid red;
+    border: 0px solid red;
     height: 100%;
     opacity: 0.3;
     background-color: aqua;

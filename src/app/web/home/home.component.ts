@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { ShowPart } from '../../model/showpart';
+import { Milestone } from '../../model/milestone';
 
-const DELAY = 100;
+const DELAY = 300;
 
 //TODO: get date from the server
 const DATE = new Date("2019-08-24T19:15:00");
@@ -19,13 +20,17 @@ export class HomeComponent implements OnInit {
     'background-color': 'red'
   };
 
+  barStyle2: any = {'width': "0%"};
+
   itemStyles: any[];
 
-  timeSlots: string[];
+  milestones: Milestone[];
   parts: ShowPart[];
   remain: string;
   
   DURATION: number;
+
+  private currentPart: ShowPart;
 
   intervalTimer: any;
   remainingTime: number;
@@ -33,7 +38,7 @@ export class HomeComponent implements OnInit {
 
   constructor() { 
     this.parts = [];
-    this.timeSlots = [];
+    this.milestones = [];
     this.itemStyles = [];
     // this.DURATION = DATE.getTime() - new Date().getTime();
   }
@@ -45,6 +50,7 @@ export class HomeComponent implements OnInit {
     this.startShowPart(0);
 
     this.DURATION = this.getTotalTime();
+    this.DURATION = 10 * 1000;
     this.remainingTime = this.DURATION;
     this.startTimer();
   }
@@ -52,15 +58,16 @@ export class HomeComponent implements OnInit {
   private startShowPart(index:number){
     if(index < this.parts.length){
       let showpart = this.parts[index];
+      this.currentPart = showpart;
       console.log("Starting '" + showpart.name+"'");
       let duration = showpart.durationInMinute * 1000;
       let remaining = duration;
 
       let partIntervalId = setInterval(() => {
-        if(remaining > 0){
+        if(remaining >= 0){
           let computedPercent = (100 * (duration - remaining)) / duration;
-          this.itemStyles[index].width = computedPercent + "%";
-          this.gfdhfudjhdjs = this.formatRemainingTime(remaining);
+          // this.itemStyles[index].width = computedPercent + "%";
+          // this.gfdhfudjhdjs = this.formatRemainingTime(remaining);
         } else {
           clearInterval(partIntervalId);
           this.startShowPart(index + 1);
@@ -74,11 +81,13 @@ export class HomeComponent implements OnInit {
   private updateCountdown(remainingTime:number){
     let computedPercent = (100 * (this.DURATION - remainingTime)) / this.DURATION;
     this.barStyle.height = computedPercent + "%";
+    this.barStyle2.width = computedPercent + "%";
     this.remain = this.formatRemainingTime(this.remainingTime);
   }
 
   private createTimeSlot(){
-    this.timeSlots.push(formatDate(new Date(), "HH:mm:ss", "en-US"))
+    let elapsedTime = this.DURATION - this.remainingTime;
+    this.milestones.unshift(new Milestone(new Date(), this.currentPart, elapsedTime));
   }
 
   private stopTimer(){
