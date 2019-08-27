@@ -160,7 +160,7 @@ export class HomeComponent implements OnInit {
   }
 
   private estimatedTime():string {
-    return this.formatRemainingTime(this.getTotalTime());
+    return this.formatRemainingTime(this.DURATION);
   }
 
   private getTotalTime():number {
