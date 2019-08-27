@@ -1,0 +1,106 @@
+
+<!-- HEADER -->
+<div class="row">
+    <h1 class="col-sm-10">L'Émission</h1>
+    <div class="col-sm-2">
+        <div class="card text-center my-1">
+            <div class="card-body">
+                <b>{{ estimatedTime() }}</b>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+
+    <!-- LEFT PANNEL -->
+    <div class="col-sm-4">
+        <div class="row">
+            <!-- PROGRESS BAR -->
+            <div class="col-sm-1">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" [ngStyle]="barStyle"></div>
+                </div>
+            </div>
+            <!-- SHOW PARTS -->
+            <div class="col-sm-11">
+                <div *ngFor="let part of parts; index as i;" class="card my-1">
+                    <div class="card-body">
+                        {{ part.name }}
+                        <span class="badge badge-primary float-right">
+                            {{ part.durationInMinute }} minutes
+                        </span>
+                        <p class="card-text">
+                            {{ gfdhfudjhdjs + " / " + formatRemainingTime(part.durationInMinute*60*1000) }}
+                        </p>
+                    </div>
+                    <div class="dfr" [ngStyle]="itemStyles[i]"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- BLANK PANNEL -->
+    <div class="col-sm-8" style="background-color: blue">
+        <div class=" float-right">
+            <div class="card text-center my-1">
+                <div class="card-body">
+                    <b>{{ formatRemainingTime(remainingTime) }}</b>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- RIGHT PANNEL -->
+</div>
+
+
+<!-- <div class="row">
+
+    LEFT PANNEL
+    <div class="col-sm-6">
+        <div class="row">
+            PROGRESS BAR
+            <div class="col-sm-1">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" [ngStyle]="barStyle">{{ (remainingTime)/1000 }}</div>
+                </div>
+            </div>
+            <div class="col-sm-7">
+                <div class="card my-1">
+                    <div class="card-body ">
+                        Introduction
+                    </div>
+                </div>
+                <div class="card my-1">
+                    <div class="card-body ">
+                        Présentation
+                    </div>
+                </div>
+                <div class="card my-1">
+                    <div class="card-body ">
+                        Diffusion
+                    </div>
+                </div>
+                <div class="card my-1">
+                    <div class="card-body ">
+                        Décortication
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    LEFT PANNEL
+    <div class="col-sm-10">
+        <div class="btn btn-primary btn-block btn-sm" (click)="createTimeSlot()">CREATE SLOT</div>
+        <div *ngFor="let slot of timeSlots" class="card my-1 card-sm">
+            <div class="card-body ">
+                {{ slot }}
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="btn btn-secondary btn-block btn-sm" (click)="toggleTimer()">TOGGLE TIMER</div>
+        </div>
+
+    </div> 
+</div> -->
