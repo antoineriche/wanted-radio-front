@@ -21,26 +21,39 @@
     height: 0%;
 }
 
-.bang {
-    border: solid 2px black;
-    padding: 3px;
+.small {
     font-size: small;
 }
 
-/* .vertical-progress {
+.loading-bar{
     position: absolute;
-    width: 90%;
-    height:100%;
-    opacity: 0.8; 
-    filter: alpha(opacity=20);
+    height: 2px;
 }
 
-.vertical-progress-bar {
-    position:absolute;
-    top:0%; 
+
+.mini {
+    font-size: 10px;
+    font-style: italic;
+}
+
+.bordered {
+    border: solid 2px black;
+    padding: 3px;
+}
+
+.bang {
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+}
+
+.rounded{
+    border-radius: 25px;
+}
+
+.all {
     width: 100%;
-    height: 0%;
-} */
+}
 
 .image-container {
     /* position:absolute; */

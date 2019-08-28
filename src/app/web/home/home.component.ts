@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { formatDate } from '@angular/common';
 import { ShowPart } from '../../model/showpart';
+import { Todo } from '../../model/todo';
 import { Milestone } from '../../model/milestone';
+import { TimeState } from '../../model/time-state';
+import { getStatusTimeFontStyle } from '../utils/status-time-handler';
 
-const DELAY = 300;
+const DELAY = 1000;
 
 //TODO: get date from the server
 const DATE = new Date("2019-08-24T19:15:00");
+const MAXPOINTS = 100;
 
 @Component({
   selector: 'app-home',
@@ -20,17 +23,41 @@ export class HomeComponent implements OnInit {
     'background-color': 'red'
   };
 
-  barStyle2: any = {'width': "0%"};
+  getStatusTimeFontStyle: any;
+
+  globalProgressBarStyle: any = {'width': "0%"};
+  points: number = 0;
 
   itemStyles: any[];
+  todos: Todo[] = [
+    new Todo("Points", 1, "+/-/0"),
+    new Todo("Import info", -1, "as JSON"),
+    new Todo("Tabs", -1, "implement tabs"),
+    new Todo("Rank", -1, "date, guest and points"),
+    new Todo("Historic", -1, "retrieve the shows"),
+    new Todo("Firebase", -1, "store data, logo, photos"),
+    new Todo("Front for us", -1, "deal with death parts"),
+    new Todo("Death part", -1, "randomize choice")
+  ];
 
   milestones: Milestone[];
   parts: ShowPart[];
   remain: string;
   
   DURATION: number;
+  startPartTimeInMillis: number;
 
+  // Deal with current show part
   private currentPart: ShowPart;
+  private currentPartTime: number;
+  private currentPartIndex: number = 0;
+  private currentPartTimer: any;
+  private currentPartStyle: any;
+  private currentStateTime : TimeState;
+  
+  // Deal with global time data
+  private globalTimerId: any;
+  private elapsedTime: number = 0;
 
   intervalTimer: any;
   remainingTime: number;
@@ -47,17 +74,25 @@ export class HomeComponent implements OnInit {
 
     //TODO: get data from the server
     this.initData();
-    this.startShowPart(0);
+    // this.startShowPart(0);
+
 
     this.DURATION = this.getTotalTime();
-    this.DURATION = 10 * 1000;
+    // this.DURATION = 6 * 1000;
     this.remainingTime = this.DURATION;
-    this.startTimer();
+
+    // Progress bar timer
+    this.globalTimerId = this.startGlobalTimer(1000);
+
+    // Init current part
+    this.startNewPart(this.currentPartIndex);
   }
 
   private startShowPart(index:number){
     if(index < this.parts.length){
       let showpart = this.parts[index];
+      this.currentPartTime = 0;
+      this.startPartTimeInMillis = new Date().getTime();
       this.currentPart = showpart;
       console.log("Starting '" + showpart.name+"'");
       let duration = showpart.durationInMinute * 1000;
@@ -73,21 +108,11 @@ export class HomeComponent implements OnInit {
           this.startShowPart(index + 1);
         }
         remaining -= DELAY;
+        this.currentPartTime += DELAY;
       }, DELAY);
     } else {
       //TODO finish
     }
-  }
-  private updateCountdown(remainingTime:number){
-    let computedPercent = (100 * (this.DURATION - remainingTime)) / this.DURATION;
-    this.barStyle.height = computedPercent + "%";
-    this.barStyle2.width = computedPercent + "%";
-    this.remain = this.formatRemainingTime(this.remainingTime);
-  }
-
-  private createTimeSlot(){
-    let elapsedTime = this.DURATION - this.remainingTime;
-    this.milestones.unshift(new Milestone(new Date(), this.currentPart, elapsedTime));
   }
 
   private stopTimer(){
@@ -102,78 +127,35 @@ export class HomeComponent implements OnInit {
       this.stopTimer();
     }
     else {
-      this.startTimer();
+    //  this.startTimer();
     }
-  }
-
-  private startTimer(){
-    this.intervalTimer  = setInterval(() => {
-      if(this.remainingTime > 0){
-        this.remainingTime -= DELAY;
-        this.updateCountdown(this.remainingTime);
-      } else {
-        this.stopTimer();
-      }
-    }, DELAY);
   }
 
   private getPart(name:string, duration:number): ShowPart{
     let part = new ShowPart();
     part.durationInMinute = duration;
     part.name = name;
+    part.description = "Haec igitur lex in amicitia sanciatur, ut neque rogemus res turpes nec faciamus rogati. Turpis enim excusatio est et minime accipienda cum in ceteris peccatis, tum si quis contra rem publicam se amici causa fecisse fateatur. Etenim eo loco, Fanni et Scaevola, locati sumus ut nos longe prospicere oporteat futuros casus rei publicae. Deflexit iam aliquantum de spatio curriculoque consuetudo maiorum."
+    part.description = name + part.description + name;
     return part;
   }
 
-  private formatRemainingTime(time: number): string {
-    let SECOND = 1000;
-    let MINUTE = 60 * SECOND;
-    let HOUR = 60 * MINUTE;
-    let str = "";
-    
-    if(time > HOUR){
-      let hour = Math.trunc(time / HOUR);
-      str += hour > 9 ? hour : "0" + hour;
-      str += ":";
-      time -= hour * HOUR;
-    } else {
-      str+= "00:"
-    }
-
-    if(time > MINUTE){
-      let min = Math.trunc(time / MINUTE);
-      str += min > 9 ? min : "0" + min;
-      str += ":";
-      time -= min * MINUTE;
-    } else {
-      str+= "00:"
-    }
-
-    if(time > SECOND){
-      let sec = Math.trunc(time / SECOND);
-      str += sec > 9 ? sec : "0" + sec;
-      time -= sec * SECOND;
-    } else {
-      str+= "00"
-    }
-
-    return str;
-  }
 
   private estimatedTime():string {
-    return this.formatRemainingTime(this.DURATION);
+    return this.toHHMMSS(this.DURATION);
   }
 
   private getTotalTime():number {
     let estimated = 0;
     this.parts.forEach(part => {
-      estimated += part.durationInMinute * 1000 * 60
+      estimated += part.getTestDuration()
     });
     return estimated;
   }
 
   private initData(){
     this.parts.push(this.getPart("Introduction", 3));
-    this.itemStyles.push({'width': "0%"});
+    this.itemStyles.push({'width': "0%", 'height':"3%"});
     this.parts.push(this.getPart("Présentation", 5));
     this.itemStyles.push({'width': "0%"});
     this.parts.push(this.getPart("Diffusion", 4));
@@ -206,7 +188,145 @@ export class HomeComponent implements OnInit {
     this.itemStyles.push({'width': "0%"});
   }
 
-  private formatShowPartTime(remaining:number, total:number){
-    this.formatRemainingTime(remaining) + " / " + this.formatRemainingTime(total);
+  private reducePoints(): void{
+    this.points -= this.getRandomInt(this.points);
+  }
+
+  private addPoints(): void {
+    this.points += this.getRandomInt(MAXPOINTS);
+  }
+
+  private resetPoints(): void {
+    this.points = 0;
+  }
+
+  private getRandomInt(max:number):number {
+    return Math.floor(Math.random() * Math.floor(max));
+  }
+
+  private toHHMMSS(milliseconds:number) {
+    let seconds =  Math.floor(milliseconds / 1000);
+    var h, m, s, result='';
+    // HOURs
+    h = Math.floor(seconds/3600);
+    seconds -= h*3600;
+    if(h){
+        result = h<10 ? '0'+h+':' : h+':';
+    }
+    // MINUTEs
+    m = Math.floor(seconds/60);
+    seconds -= m*60;
+    result += m<10 ? '0'+m+':' : m+':';
+    // SECONDs
+    s=seconds%60;
+    result += s<10 ? '0'+s : s;
+    return result;
+}
+
+  ////////////////////////////////////////////////////////////////////////
+
+  /*
+    GLOBAL PROGRESS BAR
+  */
+
+  private startGlobalTimer(interval:number):any{
+    let totalTime = this.DURATION;
+    return setInterval(() => {
+      this.elapsedTime += interval;
+      if(totalTime > 0){
+        totalTime -= interval;
+        let percent = 100 * (this.DURATION - totalTime) / this.DURATION;
+        this.updateGlobalProgressBar(percent);
+        this.remainingTime -= interval;
+      } else {
+        console.log('stop global timer');
+        this.stopGlobalTimer();
+      }
+    }, interval);
+  }
+
+  private stopGlobalTimer(){
+    if(this.globalTimerId){
+      clearInterval(this.globalTimerId);
+      this.globalTimerId = null;
+    }
+  }
+  
+  private updateGlobalProgressBar(percent:number):void{
+    this.globalProgressBarStyle.width = percent + "%";
+  }
+
+  private startNewPart(partIndex:number):void{
+    
+    if(partIndex < this.parts.length){
+      if(partIndex > 0){ // add milestone
+        this.milestones.unshift(new Milestone(new Date(), this.currentPart, 
+        this.currentPartTime, this.currentStateTime != TimeState.OUT_OF_TIME));
+      }
+
+      this.currentPartIndex = partIndex;
+      this.currentPart = this.parts[partIndex];
+      this.currentPartTime = 0;
+      this.currentPartStyle = {'width': "0%", 'background-color':'blue'};
+      let delay = 200;
+      
+      clearInterval(this.currentPartTimer);
+      this.currentPartTimer = setInterval(() => {
+        this.currentPartTime += delay;
+
+        this.currentStateTime = this.toTimeState(this.currentPartTime, this.currentPart.getTestDuration());
+        // update progress-bar
+        if(this.currentPartStyle.width != "100%"){
+          let percent = 100 * (this.currentPartTime / (this.currentPart.getTestDuration()));
+          percent = Math.min(percent, 100);
+          this.currentPartStyle.width = Math.min(percent, 100) + "%";
+          this.currentPartStyle['background-color'] = this.currentStateTime == TimeState.NORMAL ? 'primary' : 'orange';
+        } else {
+          this.currentStateTime = TimeState.OUT_OF_TIME;
+          this.currentPartStyle['background-color'] = 'red';
+        }
+      }, delay);
+    } else {
+      if(this.currentPartTimer){
+        // Test to prevent from multiple milestone for last part
+        // this.milestones.unshift(new Milestone(new Date(), this.currentPart, 
+        //   this.currentPartTime, this.currentStateTime != TimeState.OUT_OF_TIME));
+        clearInterval(this.currentPartTimer);
+      }
+    }
+  }
+
+  /**
+   * Go to next part
+   */
+  private nextPart(){
+    this.startNewPart(this.currentPartIndex + 1);
+  }
+
+  /**
+   * Returns 'true' if the current part is the last part of the show, 'false' otherwise
+   */
+  private isTheLastPartOfTheShow():boolean {
+    return this.currentPartIndex + 1 >= this.parts.length;
+  }
+
+  /**
+   * Create a Milestone and add push it into array
+   */
+  private createMilestone(){
+    this.milestones.unshift(new Milestone(new Date(), this.currentPart, this.elapsedTime, 
+    this.currentStateTime != TimeState.OUT_OF_TIME));
+  }
+
+  /**
+   * Return current state time as TimeStat
+   */
+  private toTimeState(current:number, total:number):TimeState{
+    return current < 0.8 * total ? TimeState.NORMAL :
+      current < total ? TimeState.URGENT : TimeState.URGENT;
+  }
+
+  private getTimeStateStyle(state:TimeState):any{
+    return getStatusTimeFontStyle(state);
   }
 }

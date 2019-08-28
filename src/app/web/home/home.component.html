@@ -8,7 +8,7 @@
     <div class="col-sm-2">
         <div class="card text-center my-1 align-middle">
             <div class="card-body">
-                <b>{{ formatRemainingTime(remainingTime) }}</b>
+                <b>{{ toHHMMSS(remainingTime) }}</b>
             </div>
         </div>
         <button class="btn btn-sm btn-block btn-success" (click)="toggleTimer()">GO</button>
@@ -19,7 +19,7 @@
 <div class="container mb-4 mt-2">
     <div class="row justify-content-center">
         <div class="progress col-10 px-0" style="height: 8px;">
-            <div class="progress-bar" role="progressbar" [ngStyle]="barStyle2"></div>
+            <div class="progress-bar" role="progressbar" [ngStyle]="globalProgressBarStyle"></div>
         </div>
     </div>
 </div>
@@ -27,7 +27,7 @@
 <div class="row">
 
     <!-- LEFT PANNEL -->
-    <div class="col-sm-4">
+    <div class="col-sm-3">
         <div class="row">
             <!-- PROGRESS BAR -->
             <div class="col-sm-1">
@@ -41,10 +41,10 @@
                     <div class="card-body">
                         {{ part.name }}
                         <span class="badge badge-primary float-right">
-                            {{ part.durationInMinute }} minutes
+                            {{ part.durationInMinute }} min
                         </span>
                         <p class="card-text">
-                            {{ gfdhfudjhdjs + " / " + formatRemainingTime(part.durationInMinute*60*1000) }}
+                            {{ gfdhfudjhdjs + " / " + toHHMMSS(part.getRealDuration()) }}
                         </p>
                     </div>
                     <div class="dfr" [ngStyle]="itemStyles[i]"></div>
@@ -53,27 +53,70 @@
         </div>
     </div>
 
-    <!-- BLANK PANNEL -->
-    <div class="col-sm-6">
+    <!-- MIDDLE PANNEL -->
+    <div class="col-sm-7">
+    
+        <!-- CURRENT PART -->
+        <div *ngIf="currentPart" class="card my-2">
+            <div class="card-header pl-0 pb-0 pr-3">
+                <h5 class="pl-3">
+                    {{currentPart.name}}
+                    <span class="badge badge-secondary float-right">{{ currentPart.durationInMinute }} min</span>
+                </h5>            
+                <div [ngStyle]="currentPartStyle" class="loading-bar"></div>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{currentPart.description}}</p>
+                <footer class="blockquote-footer">
+                    <div class="mb-0" [ngStyle]="getTimeStateStyle(currentStateTime)">Temps écoulé {{ toHHMMSS(currentPartTime) }}</div>
+                    <button role="button"
+                        class="btn btn-primary btn-sm float-right"
+                        (click)="nextPart()">
+                        {{ isTheLastPartOfTheShow() ? "Finish" : "Next" }}
+                    </button>
+                </footer>
+            </div>
+        </div>
 
+        <!-- TODO PANNEL -->
+        <div class="bordered">
+            <ol>
+                <li *ngFor="let todo of todos">
+                    <b> {{todo.state == -1 ? "[KO]" : "[OK]" }} {{ todo.task }}</b> -> {{ todo.goals }}
+                </li>
+            </ol>
+        </div>
     </div>
 
      <!-- RIGHT PANNEL -->
     <div class="col-sm-2">
-        <div class="my-2 text-center bang align-middle">
-            <b>12 POINTS</b>
+        <!-- POINTS -->
+        <div class="bordered my-2">
+            <div>
+                <h5>POINTS
+                    <a href="#" class="btn badge badge-pill badge-secondary float-right small"
+                    (click)="resetPoints()">reset</a>
+                </h5>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-4">
+                    <button type="button" class="btn btn-danger btn-block btn-sm" (click)="reducePoints()"> - </button>
+                </div>
+                <div class="col-4 text-center bordered">
+                    <b>{{ points }}</b>
+                </div>
+                <div class="col-4">
+                    <button type="button" class="btn btn-success btn-block btn-sm" (click)="addPoints()"> + </button>
+                </div>
+            </div>
         </div>
 
-        <button class="btn btn-block btn-primary btn-sm mx-1"
-            (click)="createTimeSlot()">
-            CREATE A SLOT
-        </button>
-
+        <!-- DISPLAY MILESTONES -->
         <div *ngFor="let milestone of milestones"
-            class="my-1 bang">
-            <b>{{ milestone.date | date:'short' }}</b><br/>
-            {{ milestone.showpart.name }}<br/>
-            <i>{{ formatRemainingTime(milestone.elapsedTimeInMillis) }}</i>
+            class="my-1 bordered small rounded">
+            <span [ngClass]="milestone.inTime ? 'badge small float-right badge-info' : 'badge small float-right badge-danger'">{{ toHHMMSS(milestone.elapsedTimeInMillis) }}</span>
+            <b>{{ milestone.showpart.name }}</b><br/>
+            <!-- <p class="small mb-0">{{ toHHMMSS(milestone.elapsedTimeInMillis) }}</p> -->
         </div>
 
     </div>
