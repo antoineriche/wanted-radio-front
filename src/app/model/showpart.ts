@@ -11,6 +11,6 @@ export class ShowPart {
     }
 
     public getTestDuration():number{
-        return this.durationInMinute * 1000;
+        return this.durationInMinute * 60 * 1000;
     }
 }

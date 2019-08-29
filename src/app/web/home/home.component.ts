@@ -6,6 +6,7 @@ import { TimeState } from '../../model/time-state';
 import { getStatusTimeFontStyle } from '../utils/status-time-handler';
 
 const DELAY = 1000;
+const GLOBAL_DELAY = 200;
 
 //TODO: get date from the server
 const DATE = new Date("2019-08-24T19:15:00");
@@ -81,11 +82,6 @@ export class HomeComponent implements OnInit {
     // this.DURATION = 6 * 1000;
     this.remainingTime = this.DURATION;
 
-    // Progress bar timer
-    this.globalTimerId = this.startGlobalTimer(1000);
-
-    // Init current part
-    this.startNewPart(this.currentPartIndex);
   }
 
   private startShowPart(index:number){
@@ -221,7 +217,19 @@ export class HomeComponent implements OnInit {
     s=seconds%60;
     result += s<10 ? '0'+s : s;
     return result;
-}
+  }
+
+  //// PROGRESS
+  private exportAsJSON(){
+    let showDetails = {
+      'durationInMillis': this.elapsedTime,
+      'friendlyDuration': this.toHHMMSS(this.elapsedTime),
+      'out-of-time': this.milestones.filter(v => !v.inTime).length,
+      'points': this.points,
+      'guest': 'unknown'
+    };
+    console.log('details', showDetails);
+  }
 
   ////////////////////////////////////////////////////////////////////////
 
@@ -229,9 +237,18 @@ export class HomeComponent implements OnInit {
     GLOBAL PROGRESS BAR
   */
 
-  private startGlobalTimer(interval:number):any{
+  private startShow(){
+    this.startGlobalTimer(GLOBAL_DELAY);
+    this.startNewPart(this.currentPartIndex);
+  }
+
+  private stopShow(){
+    console.log('FINISH !')
+  }
+
+  private startGlobalTimer(interval:number):void{
     let totalTime = this.DURATION;
-    return setInterval(() => {
+    this.globalTimerId = setInterval(() => {
       this.elapsedTime += interval;
       if(totalTime > 0){
         totalTime -= interval;
@@ -251,17 +268,16 @@ export class HomeComponent implements OnInit {
       this.globalTimerId = null;
     }
   }
-  
+
   private updateGlobalProgressBar(percent:number):void{
     this.globalProgressBarStyle.width = percent + "%";
   }
 
   private startNewPart(partIndex:number):void{
     
-    if(partIndex < this.parts.length){
       if(partIndex > 0){ // add milestone
-        this.milestones.unshift(new Milestone(new Date(), this.currentPart, 
-        this.currentPartTime, this.currentStateTime != TimeState.OUT_OF_TIME));
+        this.createMilestone(this.currentPart, this.currentPartTime, 
+          this.currentStateTime != TimeState.OUT_OF_TIME);
       }
 
       this.currentPartIndex = partIndex;
@@ -286,21 +302,30 @@ export class HomeComponent implements OnInit {
           this.currentPartStyle['background-color'] = 'red';
         }
       }, delay);
-    } else {
-      if(this.currentPartTimer){
-        // Test to prevent from multiple milestone for last part
-        // this.milestones.unshift(new Milestone(new Date(), this.currentPart, 
-        //   this.currentPartTime, this.currentStateTime != TimeState.OUT_OF_TIME));
-        clearInterval(this.currentPartTimer);
-      }
-    }
   }
 
   /**
    * Go to next part
    */
   private nextPart(){
-    this.startNewPart(this.currentPartIndex + 1);
+    if(!this.isTheLastPartOfTheShow()){
+      this.startNewPart(this.currentPartIndex + 1);
+    } else {
+      this.finishShow();
+    }
+  }
+
+  private finishShow():void{
+    this.createMilestone(this.currentPart, this.currentPartTime, this.currentStateTime != TimeState.OUT_OF_TIME);
+    clearInterval(this.currentPartTimer);
+    this.stopGlobalTimer();
+  }
+
+  /**
+   * Create a Milestone and add push it into array
+   */
+  private createMilestone(showpart:ShowPart, elapsedPartTime:number, inTime:boolean):void{
+    this.milestones.unshift(new Milestone(new Date(), showpart, elapsedPartTime, inTime));
   }
 
   /**
@@ -308,14 +333,6 @@ export class HomeComponent implements OnInit {
    */
   private isTheLastPartOfTheShow():boolean {
     return this.currentPartIndex + 1 >= this.parts.length;
-  }
-
-  /**
-   * Create a Milestone and add push it into array
-   */
-  private createMilestone(){
-    this.milestones.unshift(new Milestone(new Date(), this.currentPart, this.elapsedTime, 
-    this.currentStateTime != TimeState.OUT_OF_TIME));
   }
 
   /**
@@ -328,5 +345,17 @@ export class HomeComponent implements OnInit {
 
   private getTimeStateStyle(state:TimeState):any{
     return getStatusTimeFontStyle(state);
+  }
+
+  private isShowFinish():boolean{
+    return (this.currentPartIndex == this.parts.length -1) && !this.isShowActive();
+  }
+
+  private isShowActive():boolean{
+    return this.globalTimerId != null;
+  }
+
+  private hasShowBegun():boolean{
+    return !(this.currentPartIndex == 0 && !this.isShowActive());
   }
 }
