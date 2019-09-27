@@ -1,4 +1,4 @@
-import {TimeState} from "../../model/time-state";
+import { TimeState } from "../../model/time-state";
 
 /**
  * Return current time state color

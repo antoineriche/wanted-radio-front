@@ -4,6 +4,12 @@ import { Todo } from '../../model/todo';
 import { Milestone } from '../../model/milestone';
 import { TimeState } from '../../model/time-state';
 import { getStatusTimeFontStyle } from '../utils/status-time-handler';
+import { GuestsService } from '../services/guests.service';
+import { GuestFileInfo } from 'src/app/model/guest-file-info';
+import { ArtistDetails } from 'src/app/model/artist-details';
+import { ArtistType } from 'src/app/model/artist-type';
+import { RapperDetails } from 'src/app/model/rapper-details';
+import { GameService } from '../services/game.service';
 
 const DELAY = 1000;
 const GLOBAL_DELAY = 200;
@@ -48,6 +54,10 @@ export class HomeComponent implements OnInit {
   DURATION: number;
   startPartTimeInMillis: number;
 
+  // Retrieving guest file info
+  private guestFiles: GuestFileInfo[];
+  private details: ArtistDetails;
+
   // Deal with current show part
   private currentPart: ShowPart;
   private currentPartTime: number;
@@ -62,9 +72,8 @@ export class HomeComponent implements OnInit {
 
   intervalTimer: any;
   remainingTime: number;
-  gfdhfudjhdjs: string;
 
-  constructor() { 
+  constructor(private guestService: GuestsService, private gameService: GameService) { 
     this.parts = [];
     this.milestones = [];
     this.itemStyles = [];
@@ -82,6 +91,10 @@ export class HomeComponent implements OnInit {
     // this.DURATION = 6 * 1000;
     this.remainingTime = this.DURATION;
 
+    this.guestService.getGuestFiles().subscribe(
+      data => this.guestFiles = data,
+      err =>  console.log(err)
+    );
   }
 
   private startShowPart(index:number){
@@ -229,6 +242,42 @@ export class HomeComponent implements OnInit {
       'guest': 'unknown'
     };
     console.log('details', showDetails);
+  }
+
+  private getGuestInfo(fileId: string){
+    this.guestService.getGuestInfo(fileId).subscribe(
+      data  => {
+        this.details = data;
+        if(data.artistType == ArtistType.Rapper){
+          console.log("This is a new rapper");
+          this.details = data as RapperDetails;
+        } else if(data.artistType == ArtistType.Beatboxer){
+          console.log("This is a new beatboxer");
+          this.details = data;
+        } else {
+          console.log("Unknown type");
+          this.details = null;
+        }
+      },
+      error => console.error(error)
+    )
+  }
+
+  private getGames(){
+    this.gameService.getGames().subscribe(
+      data => console.log(data),
+      err =>  console.error(err)
+    );
+
+    this.gameService.post().subscribe(
+      data => console.log(data),
+      err => console.error(err)
+    )
+
+    this.guestService.getGuestFiles().subscribe(
+      data => console.log(data),
+      err => console.error(err)
+    )
   }
 
   ////////////////////////////////////////////////////////////////////////

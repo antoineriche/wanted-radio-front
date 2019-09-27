@@ -1,0 +1,23 @@
+<div class="card my-1">
+    <div class="row no-gutters">
+        <div class="col-md-1">
+            <!-- <img src="../../../assets/images/man.png" class="card-img" (alt)="question.category"> -->
+        </div>
+        <div class="col-md-9">
+            <div class="card-body">
+                <p class="card-title">{{ plebsQuestion.question }}</p>
+                <p class="card-text"><small class="text-muted">{{ plebsQuestion.creationDate | date: 'short' }}</small></p>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card-body">
+                <div>
+                    <mat-icon (click)="clickOnEdit(plebsQuestion)">edit</mat-icon>
+                </div>
+                <div>
+                    <mat-icon (click)="clickOnDelete(plebsQuestion)">delete</mat-icon>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

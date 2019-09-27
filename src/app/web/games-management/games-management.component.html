@@ -1,0 +1,14 @@
+<div class="row">
+    <!-- PLEBS LIST -->
+    <div class="col-sm-6">
+        <app-pleb-question *ngFor="let q of questions" [plebsQuestion]="q"
+        (onDelete)="clickOnDelete(q)"
+        (onEdit)="clickOnEdit(q)">
+        </app-pleb-question>
+    </div>
+
+    <!-- ADD PLEBS -->
+    <div class="col-sm-6">
+        <button type="button" class="btn btn-success btn-block btn-sm" (click)="addPlebs()"> + </button>
+    </div>
+</div>

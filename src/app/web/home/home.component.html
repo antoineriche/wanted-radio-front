@@ -27,15 +27,44 @@
 
     <!-- LEFT PANNEL -->
     <div class="col-sm-3">
+
         <div class="row">
+
+                <form class="example-form">
+                        <mat-form-field class="example-full-width">
+                          <input matInput placeholder="Favorite food" value="Sushi">
+                        </mat-form-field>
+                      
+                        <mat-form-field class="example-full-width">
+                          <textarea matInput placeholder="Leave a comment"></textarea>
+                        </mat-form-field>
+                      </form>
+
             <!-- PROGRESS BAR -->
             <div class="col-sm-1">
                 <div class="progress vertical-prg">
                     <div class="vertical-progress-bar" role="progressbar" [ngStyle]="barStyle"></div>
                 </div>
             </div>
-            <!-- SHOW PARTS -->
+            
+           <!-- GUEST PART -->
             <div class="col-sm-11">
+
+                <div *ngFor="let guestFile of guestFiles" 
+                    class="card my-1"
+                    (click)="getGuestInfo(guestFile.fileId)">
+                    <div class="card-body">
+                        {{ guestFile.artistName }}
+                        <span class="badge badge-primary float-right">
+                            {{ guestFile.artistType }}
+                        </span>
+                        <p class="card-text">
+                            {{ guestFile.fileId }} 
+                        </p>
+                    </div>
+                </div>
+
+                 <!-- SHOW PARTS -->
                 <div *ngFor="let part of parts; index as i;" class="card my-1">
                     <div class="card-body">
                         {{ part.name }}
@@ -55,8 +84,29 @@
     <!-- MIDDLE PANNEL -->
     <div class="col-sm-7">
     
+        <button class="btn btn-block btn-sm btn-warning" (click)="getGames()">Get Games</button>
         <button *ngIf="!hasShowBegun()" class="btn btn-block btn-sm btn-success" (click)="startShow()">GO</button>
         
+        <!-- CURRENT GUEST -->
+        <table *ngIf="details">
+            <thead>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Project</th>
+                <th>Improvisation</th>
+                <th>Favorite song</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{details.artistName}}</td>
+                    <td>{{details.artistType}}</td>
+                    <td>{{details.project.exists}}</td>
+                    <td>{{details.gameInfo.improvisation}}</td>
+                    <td><a href={{details.favoriteSong.downloadURL}}>Hey</a></td>
+                </tr>            
+            </tbody>
+        </table>
+
         <!-- CURRENT PART -->
         <div *ngIf="currentPart" class="card my-2">
             <div class="card-header pl-0 pb-0 pr-3">
@@ -81,8 +131,7 @@
         </div>
 
         <!-- TODO PANNEL -->
-        <!-- <div class="bordered" hidden> -->
-        <div class="bordered">
+        <div class="bordered" [hidden]="false">
             <ol>
                 <li *ngFor="let todo of todos">
                     <b> {{todo.state == -1 ? "[KO]" : "[OK]" }} {{ todo.task }}</b> -> {{ todo.goals }}
