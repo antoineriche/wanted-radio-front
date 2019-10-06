@@ -1,0 +1,22 @@
+<div class="bordered my-2">
+    <div>
+        <h5>
+            POINTS
+            <a href="#" class="btn badge badge-pill badge-secondary float-right small"
+            (click)="resetPoints()">reset</a>
+        </h5>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-4">
+            <button type="button" class="btn btn-danger btn-block btn-sm" 
+                (click)="reducePoints()" [disabled]="!canPlay"> - </button>
+        </div>
+        <div class="col-4 text-center bordered">
+            <b>{{ currentPoints }}</b>
+        </div>
+        <div class="col-4">
+            <button type="button" class="btn btn-success btn-block btn-sm" 
+                (click)="addPoints()" [disabled]="!canPlay"> + </button>
+        </div>
+    </div>
+</div>

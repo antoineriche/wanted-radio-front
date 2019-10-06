@@ -9,17 +9,17 @@ import { PlebsQuestion } from 'src/app/model/plebs-question';
 export class PlebQuestionComponent implements OnInit {
 
   @Input()  plebsQuestion:  PlebsQuestion;
-  @Output() onEdit:         EventEmitter<PlebsQuestion> = new EventEmitter();
-  @Output() onDelete:       EventEmitter<PlebsQuestion> = new EventEmitter();
+  @Output() onEdit:         EventEmitter<string> = new EventEmitter();
+  @Output() onDelete:       EventEmitter<string> = new EventEmitter();
   
   constructor() { }
 
-  clickOnDelete(plebsQuestion: PlebsQuestion): void {
-    this.onDelete.emit(plebsQuestion);
+  clickOnDelete(id: string): void {
+    this.onDelete.emit(id);
   }
 
-  clickOnEdit(plebsQuestion: PlebsQuestion): void {
-    this.onEdit.emit(plebsQuestion);
+  clickOnEdit(id: string): void {
+    this.onEdit.emit(id);
   }
 
   ngOnInit() {

@@ -14,12 +14,9 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatToolbarModule, MatCardModule, MatIconModule, MatSidenavModule, MatListModule, MatButtonModule } from  '@angular/material';
 
-import { PlebQuestionModule } from './web/shared-components/pleb-question/pleb-question.module';
-import { PlebQuestionComponent } from './web/shared-components/pleb-question/pleb-question.component';
-
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
@@ -34,12 +31,11 @@ import { PlebQuestionComponent } from './web/shared-components/pleb-question/ple
     MatListModule,
     MatButtonModule,
     BrowserAnimationsModule,
-    PlebQuestionModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'fr-FR'},
   ],
-  entryComponents: [PlebQuestionComponent],
+  entryComponents: [],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
   ],

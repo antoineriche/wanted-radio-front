@@ -1,14 +1,54 @@
 <div class="row">
     <!-- PLEBS LIST -->
     <div class="col-sm-6">
+
+        <div *ngIf="error != null" class='alert alert-danger'>
+            {{ error }}
+        </div>
+
+        <!-- ADD PLEBS -->
+        <form [formGroup]="plebsQuestionForm">
+            
+            <div class="form-group">
+                <label for="plebQuestionInput">Plebs Question</label>
+                <input type="email" class="form-control" id="pQuestion" 
+                placeholder="Enter your question here"
+                formControlName="pQuestion">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-7">
+                    <select id="inputState" class="form-control" formControlName="pCategory">
+                        <option value="" [disabled]="true" [selected]="true">Pick a category</option>
+                        <option *ngFor="let category of plebsCategory">{{category}}</option>
+                    </select>
+                </div>
+
+                <div class="col-md-5">
+                    <button type="submit" class="btn btn-primary float-right" 
+                        [disabled]="!plebsQuestionForm.valid"
+                        (click)="addPlebs()">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- PLEBS LIST -->
         <app-pleb-question *ngFor="let q of questions" [plebsQuestion]="q"
-        (onDelete)="clickOnDelete(q)"
-        (onEdit)="clickOnEdit(q)">
+            (onDelete)="clickOnDelete(q.id)"
+            (onEdit)="clickOnEdit(q.id)">
         </app-pleb-question>
     </div>
 
-    <!-- ADD PLEBS -->
+    <!-- GET PLEBS -->
     <div class="col-sm-6">
-        <button type="button" class="btn btn-success btn-block btn-sm" (click)="addPlebs()"> + </button>
+        <button type="button" class="btn btn-success btn-block btn-sm" (click)="playAudio()"> 
+            Play audio
+        </button>
+        <button type="button" class="btn btn-success btn-block btn-sm" (click)="stopAudio()"> 
+            Stop audio
+        </button>
     </div>
+
 </div>

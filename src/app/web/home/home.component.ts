@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { ShowPart } from '../../model/showpart';
 import { Todo } from '../../model/todo';
 import { Milestone } from '../../model/milestone';
@@ -10,13 +10,15 @@ import { ArtistDetails } from 'src/app/model/artist-details';
 import { ArtistType } from 'src/app/model/artist-type';
 import { RapperDetails } from 'src/app/model/rapper-details';
 import { GameService } from '../services/game.service';
+import { AudioPart } from 'src/app/model/audio-part';
+import { JingleService } from '../services/jingle.service';
+import { SoundService } from '../services/sound.service';
 
 const DELAY = 1000;
 const GLOBAL_DELAY = 200;
 
 //TODO: get date from the server
 const DATE = new Date("2019-08-24T19:15:00");
-const MAXPOINTS = 100;
 
 @Component({
   selector: 'app-home',
@@ -33,7 +35,6 @@ export class HomeComponent implements OnInit {
   getStatusTimeFontStyle: any;
 
   globalProgressBarStyle: any = {'width': "0%"};
-  points: number = 0;
 
   itemStyles: any[];
   todos: Todo[] = [
@@ -54,6 +55,15 @@ export class HomeComponent implements OnInit {
   DURATION: number;
   startPartTimeInMillis: number;
 
+  // AUDIOS FOR CAZARRE
+  private audios: any;
+  private cazaToofSongs: AudioPart[];
+  private jingles: AudioPart[];
+  private sounds: AudioPart[];
+  
+
+  private points: number;
+
   // Retrieving guest file info
   private guestFiles: GuestFileInfo[];
   private details: ArtistDetails;
@@ -73,7 +83,8 @@ export class HomeComponent implements OnInit {
   intervalTimer: any;
   remainingTime: number;
 
-  constructor(private guestService: GuestsService, private gameService: GameService) { 
+  constructor(private guestService: GuestsService, private gameService: GameService,
+    private jingleService: JingleService, private soundService: SoundService) { 
     this.parts = [];
     this.milestones = [];
     this.itemStyles = [];
@@ -195,22 +206,42 @@ export class HomeComponent implements OnInit {
     this.itemStyles.push({'width': "0%"});
     this.parts.push(this.getPart("Quiz classic", 5));
     this.itemStyles.push({'width': "0%"});
+  
+    this.audios = [
+      {name: "Test 1", src:"toof-coquin.mp3"},
+      {name: "Test 2", src:"toof-coquin.mp3"},
+      {name: "Test 3", src:"toof-coquin.mp3"},
+      {name: "Test 4", src:"toof-coquin.mp3"},
+      {name: "Test 5", src:"toof-coquin.mp3"},
+      {name: "Test 6", src:"toof-coquin.mp3"},
+      {name: "Test 7", src:"toof-coquin.mp3"},
+      {name: "Test 8", src:"toof-coquin.mp3"},
+      {name: "Test 9", src:"toof-coquin.mp3"},
+      {name: "Test 10", src:"toof-coquin.mp3"},
+      {name: "Test 11", src:"toof-coquin.mp3"},
+      {name: "Test 12", src:"toof-coquin.mp3"},
+      {name: "Test 13", src:"toof-coquin.mp3"},
+      {name: "Test 14", src:"toof-coquin.mp3"},
+      {name: "Test 15", src:"toof-coquin.mp3"},
+      {name: "Test 16", src:"toof-coquin.mp3"},
+      {name: "Test 17", src:"toof-coquin.mp3"},
+      {name: "Test 18", src:"toof-coquin.mp3"},
+      {name: "Test 19", src:"toof-coquin.mp3"},
+      {name: "Test 20", src:"toof-coquin.mp3"},
+    ];
+
+    this.cazaToofSongs = this.soundService.getCazaToofSongs();
+
+    this.jingles = this.jingleService.getAllJingles();
+    this.sounds = this.soundService.getAllSounds();
   }
 
-  private reducePoints(): void{
-    this.points -= this.getRandomInt(this.points);
+  private playJingle(jingle:AudioPart){
+    this.jingleService.playJingle(jingle);
   }
 
-  private addPoints(): void {
-    this.points += this.getRandomInt(MAXPOINTS);
-  }
-
-  private resetPoints(): void {
-    this.points = 0;
-  }
-
-  private getRandomInt(max:number):number {
-    return Math.floor(Math.random() * Math.floor(max));
+  private playSound(sound:AudioPart){
+    this.soundService.playSound(sound);
   }
 
   private toHHMMSS(milliseconds:number) {
@@ -269,11 +300,6 @@ export class HomeComponent implements OnInit {
       err =>  console.error(err)
     );
 
-    this.gameService.post().subscribe(
-      data => console.log(data),
-      err => console.error(err)
-    )
-
     this.guestService.getGuestFiles().subscribe(
       data => console.log(data),
       err => console.error(err)
@@ -323,7 +349,7 @@ export class HomeComponent implements OnInit {
   }
 
   private startNewPart(partIndex:number):void{
-    
+  
       if(partIndex > 0){ // add milestone
         this.createMilestone(this.currentPart, this.currentPartTime, 
           this.currentStateTime != TimeState.OUT_OF_TIME);
@@ -406,5 +432,10 @@ export class HomeComponent implements OnInit {
 
   private hasShowBegun():boolean{
     return !(this.currentPartIndex == 0 && !this.isShowActive());
+  }
+
+  private setPoints(totalPoint:number){
+    this.points = totalPoint;
+    console.log(this.points);
   }
 }

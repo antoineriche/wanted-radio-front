@@ -6,3 +6,8 @@
 .sidenav-container{
     width:250px;
 }
+
+.bordered {
+    border: solid 2px black;
+    padding: 3px;
+}

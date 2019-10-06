@@ -6,7 +6,7 @@ import { GamesManagementComponent } from './web/games-management/games-managemen
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'games-management', component: GamesManagementComponent },
+  { path: 'games-management', component: GamesManagementComponent }
 ];
 
 @NgModule({

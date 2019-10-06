@@ -1,0 +1,7 @@
+<div class="mb-1 text-center">
+    <button *ngFor="let sound of sounds" 
+        class="btn btn-sm btn-primary mx-1"
+        (click)="playSound(sound)">
+        {{ sound.title }}
+    </button>
+</div>

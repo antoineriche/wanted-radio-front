@@ -1,10 +1,18 @@
 <!-- HEADER -->
 <div class="row align-items-center">
-    <img src="../../../assets/images/logo.jpeg" class="img-fluid col-sm-1">
-    <div class="page-header col-sm-9">
-        <h3>L'Émission</h3>
-        <h4>Here is my show</h4>
+    <!-- <img src="../../../assets/images/logo.jpeg" class="img-fluid col-sm-1"> -->
+    <div class="page-header col-sm-10">
+        <!-- <h3>L'Émission</h3>
+        <h4>Here is my show</h4> -->
+        <div *ngFor="let sound of sounds" class=" mx-1 btn my-1 btn-sm btn-warning"
+            (click)="playSound(sound)">
+            {{ sound.title }}
+        </div>
+
     </div>
+
+
+
     <div class="col-sm-2">
         <div class="card text-center my-1 align-middle">
             <div class="card-body">
@@ -30,27 +38,28 @@
 
         <div class="row">
 
-                <form class="example-form">
-                        <mat-form-field class="example-full-width">
-                          <input matInput placeholder="Favorite food" value="Sushi">
-                        </mat-form-field>
-                      
-                        <mat-form-field class="example-full-width">
-                          <textarea matInput placeholder="Leave a comment"></textarea>
-                        </mat-form-field>
-                      </form>
-
             <!-- PROGRESS BAR -->
-            <div class="col-sm-1">
+            <!-- <div class="col-sm-1">
                 <div class="progress vertical-prg">
                     <div class="vertical-progress-bar" role="progressbar" [ngStyle]="barStyle"></div>
                 </div>
-            </div>
+            </div> -->
             
-           <!-- GUEST PART -->
-            <div class="col-sm-11">
 
-                <div *ngFor="let guestFile of guestFiles" 
+
+
+           <!-- GUEST PART -->
+            <div class="col-sm-6" [hidden]="false">
+                    <div *ngFor="let jingle of jingles" class="btn my-1 btn-sm btn-block btn-primary"
+                        (click)="playJingle(jingle)">
+                        {{ jingle.title }}
+                </div>
+            </div>
+
+
+
+
+                <!-- <div *ngFor="let guestFile of guestFiles" 
                     class="card my-1"
                     (click)="getGuestInfo(guestFile.fileId)">
                     <div class="card-body">
@@ -62,10 +71,10 @@
                             {{ guestFile.fileId }} 
                         </p>
                     </div>
-                </div>
+                </div> -->
 
                  <!-- SHOW PARTS -->
-                <div *ngFor="let part of parts; index as i;" class="card my-1">
+                <!-- <div *ngFor="let part of parts; index as i;" class="card my-1">
                     <div class="card-body">
                         {{ part.name }}
                         <span class="badge badge-primary float-right">
@@ -77,14 +86,14 @@
                     </div>
                     <div class="dfr" [ngStyle]="itemStyles[i]"></div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 
     <!-- MIDDLE PANNEL -->
     <div class="col-sm-7">
     
-        <button class="btn btn-block btn-sm btn-warning" (click)="getGames()">Get Games</button>
+        <button [hidden]="true" class="btn btn-block btn-sm btn-warning" (click)="getGames()">Get Games</button>
         <button *ngIf="!hasShowBegun()" class="btn btn-block btn-sm btn-success" (click)="startShow()">GO</button>
         
         <!-- CURRENT GUEST -->
@@ -109,6 +118,7 @@
 
         <!-- CURRENT PART -->
         <div *ngIf="currentPart" class="card my-2">
+
             <div class="card-header pl-0 pb-0 pr-3">
                 <h5 class="pl-3">
                     {{currentPart.name}}
@@ -116,8 +126,33 @@
                 </h5>            
                 <div [ngStyle]="currentPartStyle" class="loading-bar"></div>
             </div>
+
             <div class="card-body">
-                <p class="card-text">{{currentPart.description}}</p>
+
+                <!-- PRESENTATION CONTENT -->
+                <app-presentation *ngIf="currentPart.name === 'Présentation'">
+                </app-presentation>
+
+                <!-- LIVE CONTENT -->
+                <app-live *ngIf="currentPart.name === 'Live'"></app-live>
+
+                <!-- CAZARRE CONTENT -->
+                <app-cazarre *ngIf="currentPart.name === 'Chronique Cazarre'"
+                    [audios]="cazaToofSongs">
+                </app-cazarre>
+
+                <!-- DEATH GAME CONTENT -->
+                <app-death-game *ngIf="currentPart.name === 'Épreuve de la mort'">
+                </app-death-game>
+
+                <!-- DEFAULT CONTENT -->
+                <div *ngIf="currentPart.name !== 'Chronique Cazarre' 
+                    && currentPart.name !== 'Présentation'
+                    && currentPart.name !== 'Live'
+                    && currentPart.name !== 'Épreuve de la mort'">
+                    <p class="card-text">{{currentPart.description}}</p>
+                </div>
+                
                 <footer class="blockquote-footer">
                     <div class="mb-0" [ngStyle]="getTimeStateStyle(currentStateTime)">Temps écoulé {{ toHHMMSS(currentPartTime) }}</div>
                     <button role="button"
@@ -131,7 +166,7 @@
         </div>
 
         <!-- TODO PANNEL -->
-        <div class="bordered" [hidden]="false">
+        <div class="bordered" [hidden]="true">
             <ol>
                 <li *ngFor="let todo of todos">
                     <b> {{todo.state == -1 ? "[KO]" : "[OK]" }} {{ todo.task }}</b> -> {{ todo.goals }}
@@ -146,25 +181,7 @@
             class="btn btn-warning btn-sm btn-block"
             (click)="exportAsJSON()">SAVE</button>
         <!-- POINTS -->
-        <div class="bordered my-2">
-            <div>
-                <h5>POINTS
-                    <a href="#" class="btn badge badge-pill badge-secondary float-right small"
-                    (click)="resetPoints()">reset</a>
-                </h5>
-            </div>
-            <div class="row align-items-center">
-                <div class="col-4">
-                    <button type="button" class="btn btn-danger btn-block btn-sm" (click)="reducePoints()"> - </button>
-                </div>
-                <div class="col-4 text-center bordered">
-                    <b>{{ points }}</b>
-                </div>
-                <div class="col-4">
-                    <button type="button" class="btn btn-success btn-block btn-sm" (click)="addPoints()"> + </button>
-                </div>
-            </div>
-        </div>
+        <app-points (onPointsUpdated)="setPoints($event)"></app-points>
 
         <!-- DISPLAY MILESTONES -->
         <div *ngFor="let milestone of milestones"
