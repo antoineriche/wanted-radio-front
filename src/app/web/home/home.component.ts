@@ -60,6 +60,10 @@ export class HomeComponent implements OnInit {
   private cazaToofSongs: AudioPart[];
   private jingles: AudioPart[];
   private sounds: AudioPart[];
+  private songToPlay: AudioPart;
+  private favoriteSong: AudioPart;
+  private songForLive: AudioPart;
+  
   
 
   private points: number;
@@ -155,8 +159,26 @@ export class HomeComponent implements OnInit {
     let part = new ShowPart();
     part.durationInMinute = duration;
     part.name = name;
-    part.description = "Haec igitur lex in amicitia sanciatur, ut neque rogemus res turpes nec faciamus rogati. Turpis enim excusatio est et minime accipienda cum in ceteris peccatis, tum si quis contra rem publicam se amici causa fecisse fateatur. Etenim eo loco, Fanni et Scaevola, locati sumus ut nos longe prospicere oporteat futuros casus rei publicae. Deflexit iam aliquantum de spatio curriculoque consuetudo maiorum."
-    part.description = name + part.description + name;
+    if(name === 'Promotion'){
+      part.description = ">>>>>> Beat street Day à Bayonne dans 2 semaines.\n";
+      part.description += ">>>>> Pama qui a repris ce week-end.\n";
+      part.description += ">>>>> La tencha, jump around, no underwear, jeudi prochain.\n";
+    } else if(name === 'Freestyle'){
+      part.description = ">>>>>> Freestyle à theme.\n";
+      part.description += ">>>>>> Remplacement des mots.\n";
+
+    } else if(name === 'Question de la plebe'){
+      part.description = ">>>>>> Metronome\n";
+      part.description += ">>>>>> Manger.\n";
+      part.description += ">>>>>> Parler, non respect.\n";
+      part.description += ">>>>>> Chamallow (mot test).\n";
+      part.description += ">>>>>> Cannelle.\n";
+      part.description += ">>>>>> Prod bizarre.\n";
+
+    } else {
+      part.description = "Haec igitur lex in amicitia sanciatur, ut neque rogemus res turpes nec faciamus rogati. Turpis enim excusatio est et minime accipienda cum in ceteris peccatis, tum si quis contra rem publicam se amici causa fecisse fateatur. Etenim eo loco, Fanni et Scaevola, locati sumus ut nos longe prospicere oporteat futuros casus rei publicae. Deflexit iam aliquantum de spatio curriculoque consuetudo maiorum."
+      part.description = name + part.description + name;
+    }
     return part;
   }
 
@@ -170,7 +192,9 @@ export class HomeComponent implements OnInit {
     this.parts.forEach(part => {
       estimated += part.getTestDuration()
     });
-    return estimated;
+
+    // return estimated;
+    return 1000 * 60 * 90;
   }
 
   private initData(){
@@ -234,6 +258,19 @@ export class HomeComponent implements OnInit {
 
     this.jingles = this.jingleService.getAllJingles();
     this.sounds = this.soundService.getAllSounds();
+
+    this.songToPlay = new AudioPart();
+    this.songToPlay.source="kimay-song-to-play.mp3";
+    this.songToPlay.title="Nonchallant x Ewen, Gargamed (NeirDa prod)";
+
+    this.favoriteSong = new AudioPart();
+    this.favoriteSong.source="kimay-favorite-song.mp3";
+    this.favoriteSong.title="Taipan - Bonne année";
+
+    this.songForLive = new AudioPart();
+    this.songForLive.source="kimat-beat-for-live.mp3";
+    this.songForLive.title="Bazzy Jazz (NeirDa prod)";
+
   }
 
   private playJingle(jingle:AudioPart){

@@ -18,6 +18,10 @@ export class AudioService {
     this.playSong(this.uri + '/caza-toof/kimay/' + name, null, null);
   }
 
+  playSongToPlay(source:string){
+    this.playSong(this.uri + '/song-to-play/kimay/' + source, null, null);
+  }
+
   playWinPointsSong(endCallback:Function){
     this.playSong("toof-genial.mp3", null, endCallback);
   }

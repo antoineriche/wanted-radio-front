@@ -129,27 +129,88 @@
 
             <div class="card-body">
 
+                <!-- INTRODUCTION CONTENT -->
+                <app-introduction *ngIf="currentPart.name === 'Introduction'">
+                </app-introduction>
+
                 <!-- PRESENTATION CONTENT -->
                 <app-presentation *ngIf="currentPart.name === 'Présentation'">
                 </app-presentation>
 
+                <!-- DIFFUSION CONTENT -->
+                <app-diffusion *ngIf="currentPart.name === 'Diffusion'"
+                    [song]="songToPlay">
+                </app-diffusion>
+
+                <!-- DECORTICATION CONTENT -->
+                <app-decortication *ngIf="currentPart.name === 'Décortication'">
+                </app-decortication>
+
+                <!-- FAVORIS CONTENT -->
+                <app-favorite *ngIf="currentPart.name === 'Favoris'">
+                </app-favorite>
+
+                <!-- DIFFUSION MORCEAU FAVORIS CONTENT -->
+                <app-diffusion *ngIf="currentPart.name === 'Diffusion Morceau favoris'"
+                    [song]="favoriteSong">
+                </app-diffusion>
+
                 <!-- LIVE CONTENT -->
-                <app-live *ngIf="currentPart.name === 'Live'"></app-live>
+                <app-live *ngIf="currentPart.name === 'Live'"
+                    [song]="songForLive">
+                </app-live>
+
+                <!-- FREESTYLE CONTENT -->
+                <app-freestyle *ngIf="currentPart.name === 'Freestyle'">
+                </app-freestyle>
+
+                <!-- PROJETS CONTENT -->
+                <app-project *ngIf="currentPart.name === 'Projets'">
+                </app-project>
 
                 <!-- CAZARRE CONTENT -->
                 <app-cazarre *ngIf="currentPart.name === 'Chronique Cazarre'"
                     [audios]="cazaToofSongs">
                 </app-cazarre>
 
+                <!-- PLEBS CONTENT -->
+                <app-plebs *ngIf="currentPart.name === 'Question de la plebe'">
+                </app-plebs>
+
+                <!-- PROMO CONTENT -->
+                <app-promotion *ngIf="currentPart.name === 'Promotion'">
+                </app-promotion>
+            
                 <!-- DEATH GAME CONTENT -->
                 <app-death-game *ngIf="currentPart.name === 'Épreuve de la mort'">
                 </app-death-game>
+
+                <!-- LANGUES ETRANGERES CONTENT -->
+
+                <!-- ESCAPE CONTENT -->
+                <app-escape-game *ngIf="currentPart.name === 'Escape game'">
+                </app-escape-game>
+
+                <!-- QUIZZ CONTENT -->
+                <app-quiz *ngIf="currentPart.name === 'Quiz classic'">
+                </app-quiz>
 
                 <!-- DEFAULT CONTENT -->
                 <div *ngIf="currentPart.name !== 'Chronique Cazarre' 
                     && currentPart.name !== 'Présentation'
                     && currentPart.name !== 'Live'
-                    && currentPart.name !== 'Épreuve de la mort'">
+                    && currentPart.name !== 'Épreuve de la mort'
+                    && currentPart.name !== 'Diffusion'
+                    && currentPart.name !== 'Diffusion Morceau favoris'
+                    && currentPart.name !== 'Question de la plebe'
+                    && currentPart.name !== 'Introduction'
+                    && currentPart.name !== 'Favoris'
+                    && currentPart.name !== 'Promotion'
+                    && currentPart.name !== 'Freestyle'
+                    && currentPart.name !== 'Projets'
+                    && currentPart.name !== 'Décortication'
+                    && currentPart.name !== 'Escape game'
+                    && currentPart.name !== 'Quiz classic'">
                     <p class="card-text">{{currentPart.description}}</p>
                 </div>
                 

@@ -13,6 +13,7 @@ import { AppComponent } from './app.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatToolbarModule, MatCardModule, MatIconModule, MatSidenavModule, MatListModule, MatButtonModule } from  '@angular/material';
+import { PlebsComponent } from './web/plebs/plebs.component';
 
 @NgModule({
   declarations: [

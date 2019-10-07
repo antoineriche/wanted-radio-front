@@ -1,0 +1,14 @@
+<div class="mb-1 text-center">
+    <button class="btn btn-sm btn-primary mx-1" (click)="getRandomQuestion()">
+        Get a question
+    </button>
+</div>
+
+<div *ngIf="currentQuestion" class="card mt-2">
+    <div class="card-body">
+        {{currentQuestion.question}}
+    </div>
+</div>
+
+<!-- <app-pleb-question *ngIf="currentQuestion" [plebsQuestion]="currentQuestion">
+</app-pleb-question> -->
