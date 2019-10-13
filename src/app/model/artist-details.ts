@@ -10,6 +10,7 @@ export class ArtistDetails {
   toDiscuss: string;
   
   favoriteSong: Media;
+  songToPlay: Media;
   
   project: Project;
   
@@ -18,4 +19,22 @@ export class ArtistDetails {
   constructor(){
   }
 
+}
+
+export class RapperDetails {
+
+  artistDetails: ArtistDetails;
+  beatToPlay: Media;
+
+  constructor(){
+  }
+}
+
+export class BeatBoxerDetails {
+
+  artistDetails: ArtistDetails;
+  //beatToPlay: Media;
+
+  constructor(){
+  }
 }

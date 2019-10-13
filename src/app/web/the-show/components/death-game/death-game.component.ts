@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AudioPart } from 'src/app/model/audio-part';
-import { AudioService } from '../services/audio.service';
-import { SoundService } from '../services/sound.service';
-import { JingleService } from '../services/jingle.service';
+import { JingleService } from '../../../../services/jingle.service';
 
 @Component({
   selector: 'app-death-game',

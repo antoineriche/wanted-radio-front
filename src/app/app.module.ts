@@ -6,14 +6,16 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, LOCALE_ID, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 
-import { HomeModule } from './web/home/home.module';
 import { GamesManagementModule } from './web/games-management/games-management.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatToolbarModule, MatCardModule, MatIconModule, MatSidenavModule, MatListModule, MatButtonModule } from  '@angular/material';
-import { PlebsComponent } from './web/plebs/plebs.component';
+import { TheShowModule } from './web/the-show/the-show.module';
+import { PickAnArtistModule } from './web/pick-an-artist/pick-an-artist.module';
+import { NotifierModule } from './web/shared-components/notifier/notifier.module';
+
 
 @NgModule({
   declarations: [
@@ -21,8 +23,10 @@ import { PlebsComponent } from './web/plebs/plebs.component';
   ],
   imports: [
     BrowserModule,
-    HomeModule,
+    NotifierModule,
+    TheShowModule,
     GamesManagementModule,
+    PickAnArtistModule,
     AppRoutingModule,
     HttpClientModule,
     MatSidenavModule,

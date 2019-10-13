@@ -1,4 +1,4 @@
 export enum ArtistType {
-    Rapper = "Rapper", 
-    Beatboxer = "Beatboxer"
+    Rapper = "RAPPER", 
+    Beatboxer = "BEATBOXER"
 }

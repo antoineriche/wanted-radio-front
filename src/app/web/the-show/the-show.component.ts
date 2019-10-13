@@ -4,15 +4,16 @@ import { Todo } from '../../model/todo';
 import { Milestone } from '../../model/milestone';
 import { TimeState } from '../../model/time-state';
 import { getStatusTimeFontStyle } from '../utils/status-time-handler';
-import { GuestsService } from '../services/guests.service';
+import { GuestsService } from '../../services/guests.service';
 import { GuestFileInfo } from 'src/app/model/guest-file-info';
-import { ArtistDetails } from 'src/app/model/artist-details';
+import { ArtistDetails, RapperDetails } from 'src/app/model/artist-details';
 import { ArtistType } from 'src/app/model/artist-type';
-import { RapperDetails } from 'src/app/model/rapper-details';
-import { GameService } from '../services/game.service';
+import { GameService } from '../../services/game.service';
 import { AudioPart } from 'src/app/model/audio-part';
-import { JingleService } from '../services/jingle.service';
-import { SoundService } from '../services/sound.service';
+import { JingleService } from '../../services/jingle.service';
+import { SoundService } from '../../services/sound.service';
+import { ActivatedRoute } from '@angular/router';
+import { NotifierService } from 'src/app/services/notifier.service';
 
 const DELAY = 1000;
 const GLOBAL_DELAY = 200;
@@ -21,11 +22,11 @@ const GLOBAL_DELAY = 200;
 const DATE = new Date("2019-08-24T19:15:00");
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  selector: 'app-the-show',
+  templateUrl: './the-show.component.html',
+  styleUrls: ['./the-show.component.css']
 })
-export class HomeComponent implements OnInit {
+export class TheShowComponent implements OnInit {
 
   barStyle: any = {
     'height': "0%",
@@ -64,8 +65,6 @@ export class HomeComponent implements OnInit {
   private favoriteSong: AudioPart;
   private songForLive: AudioPart;
   
-  
-
   private points: number;
 
   // Retrieving guest file info
@@ -88,10 +87,14 @@ export class HomeComponent implements OnInit {
   remainingTime: number;
 
   constructor(private guestService: GuestsService, private gameService: GameService,
-    private jingleService: JingleService, private soundService: SoundService) { 
+    private jingleService: JingleService, private soundService: SoundService,
+    private activatedRoute: ActivatedRoute, private notifierService: NotifierService) { 
     this.parts = [];
     this.milestones = [];
     this.itemStyles = [];
+    let artistName = this.activatedRoute.snapshot.params.artistName;
+    console.log(artistName);
+
     // this.DURATION = DATE.getTime() - new Date().getTime();
   }
 
@@ -318,7 +321,7 @@ export class HomeComponent implements OnInit {
         this.details = data;
         if(data.artistType == ArtistType.Rapper){
           console.log("This is a new rapper");
-          this.details = data as RapperDetails;
+          // this.details = data as RapperDetails;
         } else if(data.artistType == ArtistType.Beatboxer){
           console.log("This is a new beatboxer");
           this.details = data;

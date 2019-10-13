@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { AudioPart } from 'src/app/model/audio-part';
-import { AudioService } from '../services/audio.service';
+import { AudioService } from 'src/app/services/audio.service';
 
 @Component({
   selector: 'app-diffusion',

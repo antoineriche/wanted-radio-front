@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SoundService } from '../services/sound.service';
+import { SoundService } from '../../../../services/sound.service';
 import { AudioPart } from 'src/app/model/audio-part';
 
 @Component({

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { PointsService } from '../../services/points.service';
+import { PointsService } from '../../../services/points.service';
 
 @Component({
   selector: 'app-points',

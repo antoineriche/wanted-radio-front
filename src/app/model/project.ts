@@ -1,8 +1,7 @@
 export class Project {
 
     name: string;
-    exists: boolean;
-    links: string;
+    links: string[];
     hasBennReleased: boolean;
 
     constructor(){

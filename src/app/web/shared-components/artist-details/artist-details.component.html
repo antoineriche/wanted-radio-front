@@ -1,0 +1,90 @@
+<div class="card">
+    
+    <div class="card-header">
+        <h5>
+            {{ artist.artistDetails.artistName }}
+            <span class="badge badge-secondary float-right">{{ artist.artistDetails.artistType }}</span>
+        </h5>
+    </div>
+
+    <div class="card-body">
+        
+        <!-- PROJECT -->
+        <div *ngIf="isThereAProject()">
+            <h6>Projet</h6>
+
+            <table class="col-md-12">
+                <tbody>
+                    <tr>
+                        <td>Titre</td>
+                        <td class="float-right">{{ artist.artistDetails.project.name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Disponible</td>
+                        <td class="float-right">{{ artist.artistDetails.project.hasBennReleased ? 'Oui' : 'Non' }}</td>
+                    </tr>
+                    <tr *ngIf="areThereLinks()">
+                        <td>Liens</td>
+                        <td class="float-right">
+                            {{ artist.artistDetails.project.links }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="separator"></div>
+        </div>
+
+        <!-- GAMES -->
+        <div *ngIf="isThereAProject()">
+            <h6>Jeux</h6>
+            
+            <table class="col-md-12">
+                <tbody>
+                    <tr>
+                        <td>Improvisation</td>
+                        <td class="float-right">{{ artist.artistDetails.gameInfo.improvisation ? 'Oui' : 'Non' }}</td>
+                    </tr>
+                    <tr *ngIf="areThereGamesToAvoid()">
+                        <td>Jeux à éviter</td>
+                        <td class="float-right">
+                            <li *ngFor="let game of artist.artistDetails.gameInfo.toAvoid">{{game}}</li>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="separator"></div>
+        </div>
+
+        <!-- MEDIAS -->
+        <div>
+            <h6>Medias</h6>
+            <!-- FAVORITE -->
+            <div>
+                Favoris
+                <br/>
+                <a [href]="artist.artistDetails.favoriteSong.downloadURL">
+                    {{ artist.artistDetails.favoriteSong.name }}
+                </a>
+            </div>
+            <!-- SONG TO PLAY -->
+            <div>
+                Morceau à diffuser
+                <br/>
+                <a [href]="artist.artistDetails.songToPlay.downloadURL">
+                    {{ artist.artistDetails.songToPlay.name }}
+                </a>
+            </div>
+            <!-- BEAT TO PLAY (RAPPER ONLY) -->
+            <div *ngIf="artist.artistDetails.artistType === 'RAPPER'">
+                Prod à diffuser
+                <br/>
+                <a [href]="artist.beatToPlay.downloadURL">
+                    {{ artist.beatToPlay.name }}
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AudioService } from './audio.service';
-import { AudioPart } from '../../model/audio-part';
+import { AudioPart } from '../model/audio-part';
 import { Title } from '@angular/platform-browser';
 
 

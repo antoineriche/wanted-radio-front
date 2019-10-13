@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PlebsQuestion } from 'src/app/model/plebs-question';
-import { GameService } from '../services/game.service';
+import { GameService } from '../../../../services/game.service';
 
 @Component({
   selector: 'app-plebs',

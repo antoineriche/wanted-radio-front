@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { GameService } from '../services/game.service';
 import { PlebsQuestion } from 'src/app/model/plebs-question';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { AudioService } from '../services/audio.service';
+import { AudioService } from '../../services/audio.service';
+import { GameService } from 'src/app/services/game.service';
 
 @Component({
   selector: 'app-games-management',

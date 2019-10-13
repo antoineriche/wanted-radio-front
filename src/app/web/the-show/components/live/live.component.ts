@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { SoundService } from '../services/sound.service';
+import { SoundService } from '../../../../services/sound.service';
 import { AudioPart } from 'src/app/model/audio-part';
-import { AudioService } from '../services/audio.service';
+import { AudioService } from '../../../../services/audio.service';
 
 @Component({
   selector: 'app-live',

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { AudioService } from '../services/audio.service';
+import { AudioService } from '../../../../services/audio.service';
 
 @Component({
   selector: 'app-cazarre',
