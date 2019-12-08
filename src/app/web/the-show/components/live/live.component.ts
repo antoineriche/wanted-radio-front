@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { SoundService } from '../../../../services/sound.service';
 import { AudioPart } from 'src/app/model/audio-part';
 import { AudioService } from '../../../../services/audio.service';
@@ -8,7 +8,7 @@ import { AudioService } from '../../../../services/audio.service';
   templateUrl: './live.component.html',
   styleUrls: ['./live.component.css']
 })
-export class LiveComponent {
+export class LiveComponent implements OnDestroy {
 
   @Input() readonly song: AudioPart;
 
@@ -18,8 +18,10 @@ export class LiveComponent {
     this.soundService.playSoundWithName("vas-y.mp3");
   }
 
-  playAudio(song:AudioPart){
-    this.audioService.playSongToPlay(song.source);
+  ngOnDestroy(): void {
+    if(!this.audioService.canPlay()){
+      this.audioService.stopSong();
+    }
   }
 
 }

@@ -27,6 +27,56 @@
             Lancer l'Émission
         </button>
 
+        <button class="btn btn-primary btn-block mb-1" 
+            (click)="addFileItem()">
+            Add item
+        </button>
+
+
+        <!-- <div class="card mt-2">
+
+            <form [formGroup]="fileForm">
+                <div formArrayName="items"
+                    *ngFor="let item of fileForm.get('items').controls; let i = index;">
+                    <div [formGroupName]="i">
+
+                            <div class="col-12">
+                                <input type="text" class="form-control" 
+                                    placeholder="Enter the file name" formControlName="name">
+                            </div>
+                        <div class="row p-3">
+                            <div class="col-3">
+                                <input ftype="text" class="form-control" 
+                                    formControlName="id" placeholder="Index">
+                            </div>
+                            <div class="col-8">
+                                <input type="file" class="custom-file-input" name="files"
+                                    formControlName="file" id="customFile">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pFileName">Audio name</label>
+                    <input type="text" class="form-control" id="pFileName" 
+                        placeholder="Enter the file name"
+                        formControlName="pFileName">
+                </div>
+
+                <input type="file" name="files" 
+                    class="form-control" 
+                    formControlName="pFile" (change)="fileChange($event)"/>
+
+                <button type="submit" class="btn btn-primary" 
+                    [disabled]="!fileForm.valid"
+                    (click)="postFile()">
+                    Submit
+                </button>
+            </form>
+        </div> -->
+        
         <app-artist-details *ngIf="currentArtist" [artist]="currentArtist">
         </app-artist-details>
     </div>

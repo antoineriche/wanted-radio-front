@@ -1,0 +1,75 @@
+<!-- JINGLES -->
+<div class="row">
+    <div class="page-header col-sm-4">
+        <select class="custom-select" (change)="artistChange($event)">
+            <option value="" [disabled]="true" [hidden]="true" [selected]="true">Select an artist</option>
+            <option *ngIf="rappers" disabled>RAPPER</option>
+            <option *ngFor="let rapper of rappers">
+                {{rapper.artistDetails.artistName}}
+            </option>
+            <option *ngIf="beatBoxers" disabled>BEATBOXER</option>
+            <option *ngFor="let beatBoxer of beatBoxers">
+                {{beatBoxer.artistDetails.artistName}}
+            </option>
+        </select>
+
+        <!-- <div class="card p-2 my-1 clickable" (click)="showForm('cazaToof')">
+            Chronique du CazaToof
+        </div> -->
+    </div>
+
+
+    <!-- <div class="page-header col-sm-6">
+
+        <div *ngIf="showFormCazaToof" class="card">
+
+            <div class="card-header p-2">
+                <h5 class="pl-3">
+                    Card title
+                    <span class="badge badge-secondary float-right clickable"
+                        (click)="addFileItem()"> + </span>
+                </h5>
+            </div>
+
+            <form [formGroup]="fileForm" class="card-body">
+
+                <div formArrayName="items"
+                    *ngFor="let item of fileForm.get('items').controls; let i = index;">
+                    
+                    <div [formGroupName]="i" class="mb-3">
+
+                        <div class="row mb-2 justify-content-between">
+                            <div class="col-2 align-self-center">
+                                Audio {{i+1}}
+                            </div>
+                            
+                            <input hidden class="form-control text-center col-2" 
+                                formControlName="id" value="{{i+1}}">
+
+                            <input type="text" class="form-control col-4" 
+                                placeholder="Enter the file name" formControlName="name">
+                            
+                            <div class="col-5 custom-file pl-3">
+                            
+                                <input type="file" class="custom-file-input"
+                                    formControlName="file" id="customFile" (change)="changeFile($event)">
+                            
+                                <label class="custom-file-label" for="customFile" #labelFile>
+                                    {{ item.file ? 'ok' : 'Choose file' }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary" 
+                    [disabled]="!fileForm.valid"
+                    (click)="postFile()">
+                    Submit
+                </button>
+            </form>
+        </div>
+    </div> -->
+
+</div>

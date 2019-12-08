@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { AudioPart } from 'src/app/model/audio-part';
 import { AudioService } from 'src/app/services/audio.service';
 
@@ -7,17 +7,19 @@ import { AudioService } from 'src/app/services/audio.service';
   templateUrl: './diffusion.component.html',
   styleUrls: ['./diffusion.component.css']
 })
-export class DiffusionComponent implements OnInit {
-
+export class DiffusionComponent implements OnInit, OnDestroy {
+  
   @Input() readonly song: AudioPart;
 
   constructor(private audioService: AudioService) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
-
-  private playAudio(audio:any){
-    this.audioService.playSongToPlay(audio.source);
+  
+  ngOnDestroy(): void {
+    if(!this.audioService.canPlay()){
+      this.audioService.stopSong();
+    }
   }
 
 }

@@ -1,0 +1,24 @@
+<p>file-picker works!</p>
+<div class="p-2">
+    <div class="row">
+        <div class="col-12">
+            <label for="pFileName">Audio name</label>
+            <input type="text" class="form-control" id="pFileName" 
+                placeholder="Enter the file name"
+                formControlName="pFileName"
+                (change)="update($event)">
+        </div>
+    </div>
+    <div class="row mt-1">
+        <div class="col-5">
+            <input type="number" class="form-control" id="pFileIndex" 
+                placeholder="Enter the file index"
+                formControlName="pFileIndex"
+                (change)="update($event)">
+        </div>
+        <div class="col-7">
+            <input type="file" name="files" class="form-control"  id="pFilePicker"
+                formControlName="pFile" (change)="update($event)"/>
+        </div>
+    </div>
+</div>

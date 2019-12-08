@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { GuestsService } from 'src/app/services/guests.service';
-import { GuestFileInfo } from 'src/app/model/guest-file-info';
 import { RapperDetails, BeatBoxerDetails } from 'src/app/model/artist-details';
 import { Router } from '@angular/router';
 import { NotifierService } from 'src/app/services/notifier.service';
+import { Observable } from 'rxjs';
+import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-pick-an-artist',
@@ -17,11 +18,29 @@ export class PickAnArtistComponent implements OnInit {
   private currentArtist: RapperDetails|BeatBoxerDetails;
 
   constructor(private guestsService: GuestsService, private router: Router,
-    private notifierService: NotifierService) { }
+    private notifierService: NotifierService) {
+  }
 
+  private file: any;
+
+  private fileChange(event: any){
+    // Instantiate an object to read the file content
+    let reader = new FileReader();
+    // when the load event is fired and the file not empty
+    if(event.target.files && event.target.files.length > 0) {
+      // Fill file variable with the file content
+      this.file = event.target.files[0];
+      console.log('file', this.file);
+  }
+}
+
+
+//TODO: prepare a show
+  
+  
   ngOnInit() {
     this.getRappers();
-    this.getBeatBoxers();  
+    this.getBeatBoxers();
   }
 
   seeDetails(artist:RapperDetails|BeatBoxerDetails){
@@ -45,10 +64,12 @@ export class PickAnArtistComponent implements OnInit {
 
   startShow(){
     if (this.currentArtist != null) {
-      let artistName = this.currentArtist.artistDetails.artistName;
-      this.router.navigate(['the-show/', artistName]);
+      this.router.navigate(['the-show/', 
+        this.currentArtist.artistDetails.artistType, 
+        this.currentArtist.artistDetails.artistName]);
     } else {
       this.notifierService.showError("Artist details is null");
     }
   }
+
 }

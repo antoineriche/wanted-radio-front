@@ -34,10 +34,46 @@ export class AudioService {
     this.play(this.uri + name, startCallback, endCallback);
   }
 
-  play(source:string, startCallback?:Function, endCallback?:Function){
+  playSongWithURL(url:string, startCallback?:Function, endCallback?:Function){
+    this.play(url, null, null);
+  }
+
+  playSongWithAudio(audio:any, startCallback?:Function, endCallback?:Function){
+    this.play(audio);
+  }
+
+  pause(){
+    if(this.audio && this.isPlaying){
+      this.audio.pause();
+      this.isPlaying = false;
+    }
+  }
+
+  resume(audio: any, currentTime: number){
     if(!this.isPlaying){
+      this.audio = new Audio(audio.source);
+      this.audio.currentTime = parseFloat(''+currentTime/1000);
+      this.audio.play();
+      this.isPlaying = true;
+    }
+  }
+
+  loadMedia(audio: any, onLoadedCallback?:Function){
+    this.audio = new Audio(audio.source);
+    this.audio.load();
+    this.audio.addEventListener('loadedmetadata', () => {
+      if(onLoadedCallback){
+        onLoadedCallback(this.audio.duration);
+      }
+   });
+  }
+
+  play(source:string, startCallback?:Function, endCallback?:Function, onLoadedCallback?:Function){
+    if(!this.isPlaying){
+      
       this.audio = new Audio(source);
-      this.audio.load();
+      // this.audio = new Audio(this.uri + source);
+      
       this.audio.addEventListener("play", () => {
         this.onStart();
         if(startCallback){
@@ -52,7 +88,6 @@ export class AudioService {
         }
       });
       this.audio.play();
-      return this.audio;
     }
   }
 
@@ -65,15 +100,33 @@ export class AudioService {
   }
 
   onStart() { this.isPlaying = true; }
-  onStop() { this.isPlaying = false; }
+  onStop() { 
+    this.isPlaying = false;
+    this.audio = null;
+  }
 
   stopSong(){
     if(this.audio){
       this.audio.pause();
-      this.audio.currentime = 0;
-      this.audio = null;
+      this.onStop();
     }
   }
+
+  resetTime(){
+    this.audio.currentTime = 0;
+  }
+
+  canPlay(): boolean {
+    return !this.isPlaying;
+  }
+
+  play2(song){
+    console.log(song)
+    this.audio = new Audio(song);
+    this.audio.load();
+    this.audio.play();
+  }
+
 
 
   /*

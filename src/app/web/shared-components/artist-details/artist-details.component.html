@@ -3,7 +3,9 @@
     <div class="card-header">
         <h5>
             {{ artist.artistDetails.artistName }}
-            <span class="badge badge-secondary float-right">{{ artist.artistDetails.artistType }}</span>
+            <span class="badge badge-secondary float-right" (click)="prepareArtistFile()">
+                {{ artist.artistDetails.artistType }}
+            </span>
         </h5>
     </div>
 
@@ -23,7 +25,7 @@
                         <td>Disponible</td>
                         <td class="float-right">{{ artist.artistDetails.project.hasBennReleased ? 'Oui' : 'Non' }}</td>
                     </tr>
-                    <tr *ngIf="areThereLinks()">
+                    <tr *ngIf="areThereLinksForProject()">
                         <td>Liens</td>
                         <td class="float-right">
                             {{ artist.artistDetails.project.links }}

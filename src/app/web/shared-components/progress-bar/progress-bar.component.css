@@ -1,0 +1,11 @@
+.my-progress-background {
+    height: 15px;
+    background-color: rgb(191, 167, 230);
+    border: 1px solid rgb(0, 0, 0);
+}
+
+.my-progress-progressing {
+    position: absolute;
+    background-color: rgb(52, 33, 221);
+    height: 100%;
+}

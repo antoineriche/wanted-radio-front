@@ -6,7 +6,7 @@ import { TimeState } from '../../model/time-state';
 import { getStatusTimeFontStyle } from '../utils/status-time-handler';
 import { GuestsService } from '../../services/guests.service';
 import { GuestFileInfo } from 'src/app/model/guest-file-info';
-import { ArtistDetails, RapperDetails } from 'src/app/model/artist-details';
+import { ArtistDetails, RapperDetails, BeatBoxerDetails } from 'src/app/model/artist-details';
 import { ArtistType } from 'src/app/model/artist-type';
 import { GameService } from '../../services/game.service';
 import { AudioPart } from 'src/app/model/audio-part';
@@ -14,10 +14,16 @@ import { JingleService } from '../../services/jingle.service';
 import { SoundService } from '../../services/sound.service';
 import { ActivatedRoute } from '@angular/router';
 import { NotifierService } from 'src/app/services/notifier.service';
+import * as formatterUtils from 'src/app/web/utils/time-formatter';
+import { AudioService } from 'src/app/services/audio.service';
+import { ProgressBarComponent } from '../shared-components/progress-bar/progress-bar.component';
+import { CountDownService } from 'src/app/services/count-down.service';
+import { Project } from 'src/app/model/project';
+
 
 const DELAY = 1000;
 const GLOBAL_DELAY = 200;
-
+const TIMER_NAME = 'global'
 //TODO: get date from the server
 const DATE = new Date("2019-08-24T19:15:00");
 
@@ -26,7 +32,9 @@ const DATE = new Date("2019-08-24T19:15:00");
   templateUrl: './the-show.component.html',
   styleUrls: ['./the-show.component.css']
 })
-export class TheShowComponent implements OnInit {
+export class TheShowComponent implements OnInit, AfterViewInit {
+  
+  @ViewChild(ProgressBarComponent, {static: false}) private progressBar: ProgressBarComponent;
 
   barStyle: any = {
     'height': "0%",
@@ -63,7 +71,13 @@ export class TheShowComponent implements OnInit {
   private sounds: AudioPart[];
   private songToPlay: AudioPart;
   private favoriteSong: AudioPart;
-  private songForLive: AudioPart;
+  private beatToPlay: AudioPart;
+  private project: Project;
+
+  private isShowActive = false;
+
+  private artist: RapperDetails|BeatBoxerDetails;
+  private artistName: string;
   
   private points: number;
 
@@ -88,31 +102,81 @@ export class TheShowComponent implements OnInit {
 
   constructor(private guestService: GuestsService, private gameService: GameService,
     private jingleService: JingleService, private soundService: SoundService,
-    private activatedRoute: ActivatedRoute, private notifierService: NotifierService) { 
+    private activatedRoute: ActivatedRoute, private notifierService: NotifierService,
+    private audioService: AudioService, private countDownService: CountDownService) { 
     this.parts = [];
     this.milestones = [];
     this.itemStyles = [];
-    let artistName = this.activatedRoute.snapshot.params.artistName;
-    console.log(artistName);
-
-    // this.DURATION = DATE.getTime() - new Date().getTime();
   }
 
-  ngOnInit() {
+  getArtist(artistType: ArtistType, artistName: string){
+    this.guestService.getArtistWithName(artistName, artistType).subscribe(
+      data => { 
+        this.artist = data;
+        this.project = this.artist.artistDetails.project;
+        this.prepareSongs(this.artist);
+      },        
+      err => this.notifierService.showAPIError(err)
+    );
+  }
 
-    //TODO: get data from the server
+  prepareSongs(artist: RapperDetails|BeatBoxerDetails): void {
+    // Song to play
+    this.songToPlay.title = artist.artistDetails.songToPlay.name;
+    this.songToPlay.source = 
+    this.guestService.getSongUrl(this.artistName, artist.artistDetails.artistType, 1);
+    // Favorite song
+    this.favoriteSong.title = artist.artistDetails.favoriteSong.name;
+    this.favoriteSong.source = 
+    this.guestService.getSongUrl(this.artistName, artist.artistDetails.artistType, 2);
+    // Beat to play
+    if(artist.artistDetails.artistType == ArtistType.Rapper){
+      let rapper =  artist as RapperDetails;
+      this.beatToPlay.title = rapper.beatToPlay.name;
+      this.beatToPlay.source = 
+      this.guestService.getSongUrl(this.artistName, ArtistType.Rapper, 3);
+    }
+  }
+
+  ngOnInit(): void {
+    this.artistName = this.activatedRoute.snapshot.params.artistName;
+    let artistType = this.activatedRoute.snapshot.params.artistType;
+    this.getArtist(artistType, this.artistName);
+
     this.initData();
-    // this.startShowPart(0);
-
 
     this.DURATION = this.getTotalTime();
-    // this.DURATION = 6 * 1000;
     this.remainingTime = this.DURATION;
-
+    this.prepareCountDownTick(this.remainingTime);
+    
     this.guestService.getGuestFiles().subscribe(
       data => this.guestFiles = data,
       err =>  console.log(err)
     );
+  }
+
+  ngAfterViewInit(): void {
+    this.progressBar.setMaxTime(this.remainingTime);
+  }
+  
+  private prepareCountDownTick(duration: number){
+    this.countDownService.registerObs(TIMER_NAME, duration, duration,
+      (remainingTime: number) => {
+        this.progressBar.setRemainingTime(remainingTime);
+        this.progressBar.update();
+        this.remainingTime = remainingTime;
+      },
+      (err: string) => console.error(err),
+      () => {
+        this.progressBar.setRemainingTime(0);
+        this.progressBar.update();
+        this.onCountDownCompleted();   
+      }
+    );
+  }
+  
+  private onCountDownCompleted() {
+    // throw new Error("Method not implemented.");
   }
 
   private startShowPart(index:number){
@@ -187,7 +251,7 @@ export class TheShowComponent implements OnInit {
 
 
   private estimatedTime():string {
-    return this.toHHMMSS(this.DURATION);
+    return this._toHHMMSS(this.DURATION);
   }
 
   private getTotalTime():number {
@@ -257,23 +321,15 @@ export class TheShowComponent implements OnInit {
       {name: "Test 20", src:"toof-coquin.mp3"},
     ];
 
+
     this.cazaToofSongs = this.soundService.getCazaToofSongs();
 
     this.jingles = this.jingleService.getAllJingles();
     this.sounds = this.soundService.getAllSounds();
 
     this.songToPlay = new AudioPart();
-    this.songToPlay.source="kimay-song-to-play.mp3";
-    this.songToPlay.title="Nonchallant x Ewen, Gargamed (NeirDa prod)";
-
     this.favoriteSong = new AudioPart();
-    this.favoriteSong.source="kimay-favorite-song.mp3";
-    this.favoriteSong.title="Taipan - Bonne année";
-
-    this.songForLive = new AudioPart();
-    this.songForLive.source="kimat-beat-for-live.mp3";
-    this.songForLive.title="Bazzy Jazz (NeirDa prod)";
-
+    this.beatToPlay = new AudioPart();
   }
 
   private playJingle(jingle:AudioPart){
@@ -284,30 +340,12 @@ export class TheShowComponent implements OnInit {
     this.soundService.playSound(sound);
   }
 
-  private toHHMMSS(milliseconds:number) {
-    let seconds =  Math.floor(milliseconds / 1000);
-    var h, m, s, result='';
-    // HOURs
-    h = Math.floor(seconds/3600);
-    seconds -= h*3600;
-    if(h){
-        result = h<10 ? '0'+h+':' : h+':';
-    }
-    // MINUTEs
-    m = Math.floor(seconds/60);
-    seconds -= m*60;
-    result += m<10 ? '0'+m+':' : m+':';
-    // SECONDs
-    s=seconds%60;
-    result += s<10 ? '0'+s : s;
-    return result;
-  }
 
   //// PROGRESS
   private exportAsJSON(){
     let showDetails = {
       'durationInMillis': this.elapsedTime,
-      'friendlyDuration': this.toHHMMSS(this.elapsedTime),
+      'friendlyDuration': this._toHHMMSS(this.elapsedTime),
       'out-of-time': this.milestones.filter(v => !v.inTime).length,
       'points': this.points,
       'guest': 'unknown'
@@ -334,18 +372,6 @@ export class TheShowComponent implements OnInit {
     )
   }
 
-  private getGames(){
-    this.gameService.getGames().subscribe(
-      data => console.log(data),
-      err =>  console.error(err)
-    );
-
-    this.guestService.getGuestFiles().subscribe(
-      data => console.log(data),
-      err => console.error(err)
-    )
-  }
-
   ////////////////////////////////////////////////////////////////////////
 
   /*
@@ -353,35 +379,14 @@ export class TheShowComponent implements OnInit {
   */
 
   private startShow(){
-    this.startGlobalTimer(GLOBAL_DELAY);
+    this.countDownService.startCountDown(TIMER_NAME);
     this.startNewPart(this.currentPartIndex);
+    this.isShowActive = true;
   }
 
   private stopShow(){
-    console.log('FINISH !')
-  }
-
-  private startGlobalTimer(interval:number):void{
-    let totalTime = this.DURATION;
-    this.globalTimerId = setInterval(() => {
-      this.elapsedTime += interval;
-      if(totalTime > 0){
-        totalTime -= interval;
-        let percent = 100 * (this.DURATION - totalTime) / this.DURATION;
-        this.updateGlobalProgressBar(percent);
-        this.remainingTime -= interval;
-      } else {
-        console.log('stop global timer');
-        this.stopGlobalTimer();
-      }
-    }, interval);
-  }
-
-  private stopGlobalTimer(){
-    if(this.globalTimerId){
-      clearInterval(this.globalTimerId);
-      this.globalTimerId = null;
-    }
+    this.progressBar.setRemainingTime(0);
+    this.progressBar.update();
   }
 
   private updateGlobalProgressBar(percent:number):void{
@@ -433,7 +438,7 @@ export class TheShowComponent implements OnInit {
   private finishShow():void{
     this.createMilestone(this.currentPart, this.currentPartTime, this.currentStateTime != TimeState.OUT_OF_TIME);
     clearInterval(this.currentPartTimer);
-    this.stopGlobalTimer();
+    this.stopShow()
   }
 
   /**
@@ -463,19 +468,23 @@ export class TheShowComponent implements OnInit {
   }
 
   private isShowFinish():boolean{
-    return (this.currentPartIndex == this.parts.length -1) && !this.isShowActive();
-  }
-
-  private isShowActive():boolean{
-    return this.globalTimerId != null;
+    return (this.currentPartIndex == this.parts.length -1) && !this.isShowActive;
   }
 
   private hasShowBegun():boolean{
-    return !(this.currentPartIndex == 0 && !this.isShowActive());
+    return !(this.currentPartIndex == 0 && !this.isShowActive);
   }
 
   private setPoints(totalPoint:number){
     this.points = totalPoint;
     console.log(this.points);
   }
+
+  isPause = false;
+  hasBegun = false; 
+
+  _toHHMMSS(time: number){
+    return formatterUtils.toHHMMSS(time);
+  }
+
 }

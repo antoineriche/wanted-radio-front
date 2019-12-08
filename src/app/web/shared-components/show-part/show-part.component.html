@@ -1,0 +1,15 @@
+<div class="card">
+    <div class="card-header pl-0 pb-0 pr-0">
+        <h5 class="pl-3">
+            {{currentPart? currentPart.name : 'unknown'}}
+            <!-- <span class="badge badge-secondary float-right">{{ currentPart.durationInMinute }} min</span> -->
+        </h5>
+        <app-progress-bar [containerStyle]="containerStyle" [contentStyle]="contentStyle">
+        </app-progress-bar>
+        <!-- <div [ngStyle]="currentPartStyle" class="loading-bar"></div> -->
+    </div>
+
+    <div class="card-body">
+        <div class="btn btn-primary" (click)="start()">GO</div>
+    </div>
+</div>

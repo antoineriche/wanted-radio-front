@@ -19,6 +19,9 @@ import { EscapeGameModule } from './components/escape-game/escape-game.module';
 import { CazarreModule } from './components/cazarre/cazarre.module';
 import { TheShowComponent } from './the-show.component';
 import { NotifierModule } from '../shared-components/notifier/notifier.module';
+import { ArtistDetailsModule } from '../shared-components/artist-details/artist-details.module';
+import { ProgressBarModule } from '../shared-components/progress-bar/progress-bar.module';
+import { ShowPartModule } from '../shared-components/show-part/show-part.module';
 
 
 @NgModule({
@@ -29,8 +32,11 @@ import { NotifierModule } from '../shared-components/notifier/notifier.module';
     CommonModule,
     CazarreModule,
     PresentationModule,
+    ArtistDetailsModule,
+    ProgressBarModule,
     PointsModule,
     NotifierModule,
+    ShowPartModule,
     DiffusionModule,
     PlebsModule,
     QuizModule,

@@ -1,1 +1,24 @@
-<p>project works!</p>
+<h3>{{project.name}}</h3>
+
+<div class="row">
+    <div class="col-6">
+        <div class="col-7" style="text-align: left;">
+            Disponbile
+        </div>
+        
+        <div class="col-4">
+            {{project.hasBennReleased ? 'Oui' : 'Non'}}
+        </div>
+    </div>
+
+    <div class="col-6">
+        <h5 class="mt-2">Liens</h5>
+        <ul *ngIf="project.links && project.links.length > 0">
+            <li *ngFor="let link of project.links">
+                {{link}}
+            </li>
+        </ul>
+    </div>
+    
+</div>
+

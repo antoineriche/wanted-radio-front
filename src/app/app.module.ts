@@ -15,6 +15,8 @@ import { MatToolbarModule, MatCardModule, MatIconModule, MatSidenavModule, MatLi
 import { TheShowModule } from './web/the-show/the-show.module';
 import { PickAnArtistModule } from './web/pick-an-artist/pick-an-artist.module';
 import { NotifierModule } from './web/shared-components/notifier/notifier.module';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { PrepareShowModule } from './web/prepare-show/prepare-show.module';
 
 
 @NgModule({
@@ -23,9 +25,11 @@ import { NotifierModule } from './web/shared-components/notifier/notifier.module
   ],
   imports: [
     BrowserModule,
+    FontAwesomeModule,
     NotifierModule,
     TheShowModule,
     GamesManagementModule,
+    PrepareShowModule,
     PickAnArtistModule,
     AppRoutingModule,
     HttpClientModule,

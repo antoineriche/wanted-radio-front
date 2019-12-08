@@ -1,54 +1,37 @@
-<!-- HEADER -->
+<!-- JINGLES -->
 <div class="row align-items-center">
-    <!-- <img src="../../../assets/images/logo.jpeg" class="img-fluid col-sm-1"> -->
     <div class="page-header col-sm-10">
-        <!-- <h3>L'Émission</h3>
-        <h4>Here is my show</h4> -->
         <div *ngFor="let sound of sounds" class=" mx-1 btn my-1 btn-sm btn-warning"
             (click)="playSound(sound)">
             {{ sound.title }}
         </div>
     </div>
 
-
     <div class="col-sm-2">
         <div class="card text-center my-1 align-middle">
             <div class="card-body">
-                <b>{{ toHHMMSS(remainingTime) }}</b>
+                <b>{{ _toHHMMSS(remainingTime) }}</b>
             </div>
         </div>
     </div>
 </div>
 
 <!-- PROGRESS BAR -->
-<div class="container mb-4 mt-2">
-    <div class="row justify-content-center">
-        <div class="progress col-10 px-0" style="height: 8px;">
-            <div class="progress-bar" role="progressbar" [ngStyle]="globalProgressBarStyle"></div>
-        </div>
-    </div>
+<div class="my-2">
+    <app-progress-bar></app-progress-bar>
 </div>
 
-
 <div class="row">
-
-
 
     <!-- LEFT PANNEL -->
     <div class="col-sm-3">
 
         <div class="row">
 
-            <!-- PROGRESS BAR -->
-            <!-- <div class="col-sm-1">
-                <div class="progress vertical-prg">
-                    <div class="vertical-progress-bar" role="progressbar" [ngStyle]="barStyle"></div>
-                </div>
-            </div> -->
+            <!-- ARTIST DETAIL -->
+            <app-artist-details *ngIf="artist" [artist]="artist" class="col-md-12">
+            </app-artist-details>
             
-
-
-
            <!-- GUEST PART -->
             <div class="col-sm-6" [hidden]="false">
                     <div *ngFor="let jingle of jingles" class="btn my-1 btn-sm btn-block btn-primary"
@@ -56,45 +39,12 @@
                         {{ jingle.title }}
                 </div>
             </div>
-
-
-
-
-                <!-- <div *ngFor="let guestFile of guestFiles" 
-                    class="card my-1"
-                    (click)="getGuestInfo(guestFile.fileId)">
-                    <div class="card-body">
-                        {{ guestFile.artistName }}
-                        <span class="badge badge-primary float-right">
-                            {{ guestFile.artistType }}
-                        </span>
-                        <p class="card-text">
-                            {{ guestFile.fileId }} 
-                        </p>
-                    </div>
-                </div> -->
-
-                 <!-- SHOW PARTS -->
-                <!-- <div *ngFor="let part of parts; index as i;" class="card my-1">
-                    <div class="card-body">
-                        {{ part.name }}
-                        <span class="badge badge-primary float-right">
-                            {{ part.durationInMinute }} min
-                        </span>
-                        <p class="card-text">
-                            {{ gfdhfudjhdjs + " / " + toHHMMSS(part.getRealDuration()) }}
-                        </p>
-                    </div>
-                    <div class="dfr" [ngStyle]="itemStyles[i]"></div>
-                </div>
-            </div> -->
         </div>
     </div>
 
     <!-- MIDDLE PANNEL -->
     <div class="col-sm-7">
-    
-        <button [hidden]="true" class="btn btn-block btn-sm btn-warning" (click)="getGames()">Get Games</button>
+        <!-- <app-show-part></app-show-part> -->
         <button *ngIf="!hasShowBegun()" class="btn btn-block btn-sm btn-success" (click)="startShow()">GO</button>
         
         <!-- CURRENT GUEST -->
@@ -119,7 +69,7 @@
 
         <!-- CURRENT PART -->
         <div *ngIf="currentPart" class="card my-2">
-
+            
             <div class="card-header pl-0 pb-0 pr-3">
                 <h5 class="pl-3">
                     {{currentPart.name}}
@@ -158,7 +108,7 @@
 
                 <!-- LIVE CONTENT -->
                 <app-live *ngIf="currentPart.name === 'Live'"
-                    [song]="songForLive">
+                    [song]="beatToPlay">
                 </app-live>
 
                 <!-- FREESTYLE CONTENT -->
@@ -166,7 +116,8 @@
                 </app-freestyle>
 
                 <!-- PROJETS CONTENT -->
-                <app-project *ngIf="currentPart.name === 'Projets'">
+                <app-project *ngIf="currentPart.name === 'Projets'"
+                    [project]="project">
                 </app-project>
 
                 <!-- CAZARRE CONTENT -->
@@ -216,7 +167,7 @@
                 </div>
                 
                 <footer class="blockquote-footer">
-                    <div class="mb-0" [ngStyle]="getTimeStateStyle(currentStateTime)">Temps écoulé {{ toHHMMSS(currentPartTime) }}</div>
+                    <div class="mb-0" [ngStyle]="getTimeStateStyle(currentStateTime)">Temps écoulé {{ _toHHMMSS(currentPartTime) }}</div>
                     <button role="button"
                         class="btn btn-primary btn-sm float-right"
                         (click)="nextPart()"
@@ -248,7 +199,7 @@
         <!-- DISPLAY MILESTONES -->
         <div *ngFor="let milestone of milestones"
             class="my-1 bordered small rounded">
-            <span [ngClass]="milestone.inTime ? 'badge small float-right badge-info' : 'badge small float-right badge-danger'">{{ toHHMMSS(milestone.elapsedTimeInMillis) }}</span>
+            <span [ngClass]="milestone.inTime ? 'badge small float-right badge-info' : 'badge small float-right badge-danger'">{{ _toHHMMSS(milestone.elapsedTimeInMillis) }}</span>
             <b>{{ milestone.showpart.name }}</b><br/>
             <!-- <p class="small mb-0">{{ toHHMMSS(milestone.elapsedTimeInMillis) }}</p> -->
         </div>
